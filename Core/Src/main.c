@@ -23,7 +23,6 @@
 #include "i2c.h"
 #include "spi.h"
 #include "tim.h"
-#include "usb_device.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -62,16 +61,21 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void display_init() {
+void Display_Init() {
     ST7735_Init();
     // Check border
     ST7735_FillScreen(ST7735_BLACK);
     //const char ready[] = "Ready!\r\n";
     //HAL_UART_Transmit(&huart2, (uint8_t*)ready, sizeof(ready)-1, HAL_MAX_DELAY);
-    ST7735_WriteString(1, 25, "reciever init...", Font_11x18, ST7735_COLOR565(0, 116, 199), ST7735_BLACK);
-    ST7735_WriteString(1, 0, "FM/AM/SW", Font_16x26, ST7735_COLOR565(255, 187, 51), ST7735_BLACK);
+    ST7735_WriteString(30, 25, "reciever", Font_11x18, ST7735_COLOR565(0, 116, 199), ST7735_BLACK);
+    ST7735_WriteString(15, 0, "FM/AM/SW", Font_16x26, ST7735_COLOR565(255, 187, 51), ST7735_BLACK);
     HAL_Delay(2000);
 }
+
+void loop() {
+
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -108,7 +112,8 @@ int main(void)
   MX_TIM5_Init();
   MX_CRC_Init();
   /* USER CODE BEGIN 2 */
-  display_init();
+  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
+  Display_Init();
   /* USER CODE END 2 */
 
   /* Init scheduler */

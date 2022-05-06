@@ -25,7 +25,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <string.h>
+#include "st7735.h"
+#include "fonts.h"
+#include "tim.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,7 +48,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+int32_t prevCounter = 0;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -68,12 +71,10 @@ const osThreadAttr_t encoderTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for usbTask */
-osThreadId_t usbTaskHandle;
-const osThreadAttr_t usbTask_attributes = {
-  .name = "usbTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+/* Definitions for EncoderQueue */
+osMessageQueueId_t EncoderQueueHandle;
+const osMessageQueueAttr_t EncoderQueue_attributes = {
+  .name = "EncoderQueue"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -84,9 +85,7 @@ const osThreadAttr_t usbTask_attributes = {
 void StartDefaultTask(void *argument);
 void StartDisplayTask(void *argument);
 void StartEncoderTask(void *argument);
-void StartUSBTask(void *argument);
 
-extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
@@ -111,6 +110,10 @@ void MX_FREERTOS_Init(void) {
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
+  /* Create the queue(s) */
+  /* creation of EncoderQueue */
+  EncoderQueueHandle = osMessageQueueNew (16, sizeof(uint16_t), &EncoderQueue_attributes);
+
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -124,9 +127,6 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of encoderTask */
   encoderTaskHandle = osThreadNew(StartEncoderTask, NULL, &encoderTask_attributes);
-
-  /* creation of usbTask */
-  usbTaskHandle = osThreadNew(StartUSBTask, NULL, &usbTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -147,8 +147,6 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
-  /* init code for USB_DEVICE */
-  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   for(;;)
@@ -169,9 +167,15 @@ void StartDisplayTask(void *argument)
 {
   /* USER CODE BEGIN StartDisplayTask */
   /* Infinite loop */
+  uint16_t result = 0;
+  int16_t counter = 0;
+  char buff[16];
   for(;;)
   {
-    osDelay(1);
+	  result = osMessageQueueGet(EncoderQueueHandle, &counter, 0, 0);
+	  snprintf(buff, sizeof(buff), "%02d", counter);
+	  ST7735_WriteString(0, 60, buff, Font_7x10, ST7735_GREEN, ST7735_BLACK);
+    osDelay(100);
   }
   /* USER CODE END StartDisplayTask */
 }
@@ -187,29 +191,32 @@ void StartEncoderTask(void *argument)
 {
   /* USER CODE BEGIN StartEncoderTask */
   /* Infinite loop */
+  char buff[16];
+  int16_t counter = 0;
   for(;;)
   {
-    osDelay(1);
+		int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
+		currCounter = 32767 - ((currCounter-1) & 0xFFFF) / 2;
+		if(currCounter != prevCounter) {
+			if(currCounter > prevCounter)
+			{
+				//ST7735_WriteString(0, 65, ">", Font_7x10, ST7735_GREEN, ST7735_BLACK);
+				counter = 1;
+				osMessageQueuePut(EncoderQueueHandle, &counter, 0, 0 );
+			}
+			else
+			{
+				//ST7735_WriteString(0, 65, "<", Font_7x10, ST7735_GREEN, ST7735_BLACK);
+				counter = -1;
+				osMessageQueuePut(EncoderQueueHandle, &counter, 0, 0 );
+			}
+			snprintf(buff, sizeof(buff), "%06d", currCounter);
+			ST7735_WriteString(90, 46, buff, Font_7x10, ST7735_GREEN, ST7735_BLACK);
+			prevCounter = currCounter;
+		}
+    osDelay(100);
   }
   /* USER CODE END StartEncoderTask */
-}
-
-/* USER CODE BEGIN Header_StartUSBTask */
-/**
-* @brief Function implementing the usbTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartUSBTask */
-void StartUSBTask(void *argument)
-{
-  /* USER CODE BEGIN StartUSBTask */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END StartUSBTask */
 }
 
 /* Private application code --------------------------------------------------*/

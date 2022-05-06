@@ -51,11 +51,12 @@
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+volatile uint8_t buttonPressed[5] = { 0 };
+uint32_t lastPressed = 0;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
+extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN EV */
@@ -188,17 +189,23 @@ void TIM1_UP_TIM10_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles USB On The Go FS global interrupt.
+  * @brief This function handles TIM3 global interrupt.
   */
-void OTG_FS_IRQHandler(void)
+void TIM3_IRQHandler(void)
 {
-  /* USER CODE BEGIN OTG_FS_IRQn 0 */
+  /* USER CODE BEGIN TIM3_IRQn 0 */
 
-  /* USER CODE END OTG_FS_IRQn 0 */
-  HAL_PCD_IRQHandler(&hpcd_USB_OTG_FS);
-  /* USER CODE BEGIN OTG_FS_IRQn 1 */
+  /* USER CODE END TIM3_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim3);
+  /* USER CODE BEGIN TIM3_IRQn 1 */
+	if(TIM3->SR & TIM_SR_TIF){
+		/* Here code to execute */
 
-  /* USER CODE END OTG_FS_IRQn 1 */
+
+		/* Interrupt enabled */
+		TIM3->SR &= ~TIM_SR_TIF;
+	}
+  /* USER CODE END TIM3_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
