@@ -67,8 +67,8 @@ void Display_Init() {
     ST7735_FillScreen(ST7735_BLACK);
     //const char ready[] = "Ready!\r\n";
     //HAL_UART_Transmit(&huart2, (uint8_t*)ready, sizeof(ready)-1, HAL_MAX_DELAY);
-    ST7735_WriteString(30, 25, "reciever", Font_11x18, ST7735_COLOR565(0, 116, 199), ST7735_BLACK);
     ST7735_WriteString(15, 0, "FM/AM/SW", Font_16x26, ST7735_COLOR565(255, 187, 51), ST7735_BLACK);
+    ST7735_WriteString(34, 25, "reciever", Font_11x18, ST7735_COLOR565(0, 116, 199), ST7735_BLACK);
     HAL_Delay(2000);
 }
 
@@ -109,8 +109,8 @@ int main(void)
   MX_I2C1_Init();
   MX_SPI1_Init();
   MX_TIM3_Init();
-  MX_TIM5_Init();
   MX_CRC_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
   Display_Init();

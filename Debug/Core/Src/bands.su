@@ -1,0 +1,2 @@
+../Core/Src/bands.c:35:6:setBand	16	static
+../Core/Src/bands.c:46:6:displayBand	32	static
