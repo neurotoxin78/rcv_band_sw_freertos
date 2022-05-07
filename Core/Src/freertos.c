@@ -182,12 +182,14 @@ void StartDisplayTask(void *argument)
 	int16_t max_index = 5;
 	char buff[16];
 	char bbuff[8];
+	ST7735_FillScreenFast(ST7735_BLACK);
+	displayBand(last_counter);
 	for (;;) {
 		//Encoder Rotate
 		EncoderReceiveResult = osMessageQueueGet(EncoderQueueHandle, &counter, 0, 0);
-		snprintf(buff, sizeof(buff), "%02d", counter);
-		ST7735_WriteString(0, 60, buff, Font_7x10, ST7735_GREEN, ST7735_BLACK);
-		if(counter == 1) {
+		//snprintf(buff, sizeof(buff), "%02d", counter);
+		//ST7735_WriteString(0, 60, buff, Font_7x10, ST7735_GREEN, ST7735_BLACK);
+		if(counter == 2) {
 			if(last_counter != max_index -1)
 			{
 				last_counter += 1;
@@ -198,7 +200,7 @@ void StartDisplayTask(void *argument)
 				counter = 0;
 			}
 			displayBand(last_counter);
-		}else if (counter == 2){
+		}else if (counter == 1){
 			if(last_counter != 0)
 			{
 				last_counter -= 1;
@@ -261,9 +263,8 @@ void StartEncoderTask(void *argument)
 			{
 
 			}
-			snprintf(buff, sizeof(buff), "%06d", currCounter);
-			ST7735_WriteString(90, 46, buff, Font_7x10, ST7735_GREEN,
-					ST7735_BLACK);
+			//snprintf(buff, sizeof(buff), "%06d", currCounter);
+			//ST7735_WriteString(90, 46, buff, Font_7x10, ST7735_GREEN, ST7735_BLACK);
 			prevCounter = currCounter;
 		}
 		// Button
@@ -274,7 +275,7 @@ void StartEncoderTask(void *argument)
 			//ST7735_WriteString(80, 60, buff, Font_7x10, ST7735_RED, ST7735_BLACK);
 			osMessageQueuePut(ButtonQueueHandle, &buttonSend, 0, 0);
 		}
-		osDelay(100);
+		osDelay(500);
 	}
   /* USER CODE END StartEncoderTask */
 }
