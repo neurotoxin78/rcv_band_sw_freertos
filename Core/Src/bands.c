@@ -15,14 +15,15 @@ typedef struct
   const char *name;
   const char *minFreq; // Min. frequency value for the band (unit 0.01Hz)
   const char *maxFreq; // Max. frequency value for the band (unit 0.01Hz)
+  const int	tics;
 } Band;
 
 Band band[5] = {
-  {"FM  ", "80Mhz", "108Mhz"}, // 100KHz to 1700KHz
-  {"AM  ", "1600Khz", "3000KHz"},
-  {"SW1 ", "7.2Mhz", "10Mhz"},
-  {"SW2 ", "10Mhz", "13Mhz"},
-  {"SW3 ", "14Mhz", "21Mhz"},
+  {"FM  ", "80Mhz", "108Mhz",1}, // 100KHz to 1700KHz
+  {"AM  ", "1600Khz", "3000KHz",120},
+  {"SW1 ", "7.2Mhz", "10Mhz", 140},
+  {"SW2 ", "10Mhz", "13Mhz",150},
+  {"SW3 ", "14Mhz", "21Mhz",160},
 };
 // Calculate the last element position (index) of the array band
 const int lastBand = (sizeof band / sizeof(Band)) - 1; // For this case will be 26.
