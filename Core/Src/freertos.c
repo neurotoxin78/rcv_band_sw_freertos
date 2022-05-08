@@ -175,21 +175,15 @@ void StartDisplayTask(void *argument)
 {
   /* USER CODE BEGIN StartDisplayTask */
 	/* Infinite loop */
-	uint16_t EncoderReceiveResult = 0;
-	uint16_t ButtonReceiveResult = 0;
 	int32_t counter = 0;
 	int16_t button = 0;
 	int32_t last_counter = 0;
 	int16_t max_index = 5;
-	char buff[16];
-	char bbuff[8];
 	ST7735_FillScreenFast(ST7735_BLACK);
 	displayBand(last_counter);
 	for (;;) {
 		//Encoder Rotate
-		EncoderReceiveResult = osMessageQueueGet(EncoderQueueHandle, &counter, 0, 0);
-		//snprintf(buff, sizeof(buff), "%02d", counter);
-		//ST7735_WriteString(0, 60, buff, Font_7x10, ST7735_GREEN, ST7735_BLACK);
+		osMessageQueueGet(EncoderQueueHandle, &counter, 0, 0);
 		if(counter == 2) {
 			if(last_counter != max_index -1)
 			{
@@ -218,16 +212,11 @@ void StartDisplayTask(void *argument)
 		}
 
 		//Button click
-		ButtonReceiveResult = osMessageQueueGet(ButtonQueueHandle, &button, 0, 0);
+		osMessageQueueGet(ButtonQueueHandle, &button, 0, 0);
 		if (button)
 		{
-			snprintf(bbuff, sizeof(bbuff), "%01d", button);
-			ST7735_WriteString(80, 60, bbuff, Font_7x10, ST7735_CYAN, ST7735_BLACK);
-			button = 0;
-			osDelay(500);
-			ST7735_WriteString(80, 60, "     ", Font_7x10, ST7735_CYAN, ST7735_BLACK);
-		}
 
+		}
 		osDelay(1000);
 	}
   /* USER CODE END StartDisplayTask */
@@ -244,7 +233,6 @@ void StartEncoderTask(void *argument)
 {
   /* USER CODE BEGIN StartEncoderTask */
 	/* Infinite loop */
-	char buff[16];
 	int32_t prevCounter = 0;
 	int32_t counter = 0;
 	uint8_t buttonNumber = 0;
@@ -264,16 +252,11 @@ void StartEncoderTask(void *argument)
 			{
 
 			}
-			//snprintf(buff, sizeof(buff), "%06d", currCounter);
-			//ST7735_WriteString(90, 46, buff, Font_7x10, ST7735_GREEN, ST7735_BLACK);
 			prevCounter = currCounter;
 		}
 		// Button
 		if(buttonPressed[buttonNumber]) {
 			buttonPressed[buttonNumber] = 0;
-			//char buff[16];
-			//snprintf(buff, sizeof(buff), "BUTTON %d", buttonNumber);
-			//ST7735_WriteString(80, 60, buff, Font_7x10, ST7735_RED, ST7735_BLACK);
 			osMessageQueuePut(ButtonQueueHandle, &buttonSend, 0, 0);
 		}
 		osDelay(500);
