@@ -15,7 +15,7 @@ typedef struct
   const char *name;
   const char *minFreq; // Min. frequency value for the band (unit 0.01Hz)
   const char *maxFreq; // Max. frequency value for the band (unit 0.01Hz)
-  const int	tics;
+  const int	ticks;
 } Band;
 
 Band band[5] = {
