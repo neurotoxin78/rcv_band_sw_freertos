@@ -9,7 +9,6 @@
 #ifndef INC_BANDS_H_
 #define INC_BANDS_H_
 
-void setBand(int counter);
 void displayBand();
 
 #endif /* INC_BANDS_H_ */

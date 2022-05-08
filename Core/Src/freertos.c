@@ -29,6 +29,7 @@
 #include "st7735.h"
 #include "fonts.h"
 #include "tim.h"
+#include "rtc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -158,7 +159,7 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN StartDefaultTask */
 	/* Infinite loop */
 	for (;;) {
-		osDelay(1);
+		osDelay(100);
 	}
   /* USER CODE END StartDefaultTask */
 }
@@ -227,7 +228,7 @@ void StartDisplayTask(void *argument)
 			ST7735_WriteString(80, 60, "     ", Font_7x10, ST7735_CYAN, ST7735_BLACK);
 		}
 
-		osDelay(100);
+		osDelay(1000);
 	}
   /* USER CODE END StartDisplayTask */
 }
