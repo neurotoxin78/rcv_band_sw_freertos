@@ -164,7 +164,9 @@ void StartDefaultTask(void *argument)
 	uint8_t angle = 1;
 	const uint8_t angle_difference = 50;
 	uint32_t rgb_color = hsl_to_rgb(angle + (0 * angle_difference), 125, 255);
-	led_set_RGB(0, (rgb_color >> 16) & 0xFF, (rgb_color >> 8) & 0xFF, rgb_color & 0xFF);
+	//led_set_RGB(0, (rgb_color >> 16) & 0xFF, (rgb_color >> 8) & 0xFF, rgb_color & 0xFF);
+	//led_set_RGB(0, (rgb_color >> 16), 0x00 & 0xFF, rgb_color & 0xFF);
+	led_set_all_RGBW(rgb_color,100,rgb_color,255);
 	led_render();
 	for (;;) {
 
