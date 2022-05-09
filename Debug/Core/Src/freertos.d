@@ -44,7 +44,9 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  ../Core/Inc/st7735.h ../Core/Inc/fonts.h ../Core/Inc/fonts.h \
- ../Core/Inc/tim.h ../Core/Inc/main.h ../Core/Inc/rtc.h
+ ../Core/Inc/tim.h ../Core/Inc/main.h ../Core/Inc/rtc.h \
+ ../Core/Inc/bands.h ../Core/Inc/NeoPixel.h ../Core/Inc/tim.h \
+ ../Core/Inc/dma.h
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
@@ -96,3 +98,7 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
 ../Core/Inc/tim.h:
 ../Core/Inc/main.h:
 ../Core/Inc/rtc.h:
+../Core/Inc/bands.h:
+../Core/Inc/NeoPixel.h:
+../Core/Inc/tim.h:
+../Core/Inc/dma.h:

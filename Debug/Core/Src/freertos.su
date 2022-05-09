@@ -1,4 +1,5 @@
-../Core/Src/freertos.c:102:6:MX_FREERTOS_Init	8	static
-../Core/Src/freertos.c:157:6:StartDefaultTask	16	static
-../Core/Src/freertos.c:174:6:StartDisplayTask	32	static
-../Core/Src/freertos.c:232:6:StartEncoderTask	40	static
+../Core/Src/freertos.c:105:6:MX_FREERTOS_Init	8	static
+../Core/Src/freertos.c:160:6:StartDefaultTask	24	static
+../Core/Src/freertos.c:184:6:StartDisplayTask	32	static
+../Core/Src/freertos.c:241:6:StartEncoderTask	40	static
+../Core/Src/freertos.c:279:10:hsl_to_rgb	32	static

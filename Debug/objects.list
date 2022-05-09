@@ -1,5 +1,7 @@
+"./Core/Src/NeoPixel.o"
 "./Core/Src/bands.o"
 "./Core/Src/crc.o"
+"./Core/Src/dma.o"
 "./Core/Src/fonts.o"
 "./Core/Src/freertos.o"
 "./Core/Src/gpio.o"

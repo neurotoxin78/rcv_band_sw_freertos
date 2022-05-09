@@ -72,6 +72,8 @@ void Error_Handler(void);
 #define ENC_CLK_GPIO_Port GPIOA
 #define ENC_DT_Pin GPIO_PIN_5
 #define ENC_DT_GPIO_Port GPIOB
+#define NEOPIXEL_Pin GPIO_PIN_9
+#define NEOPIXEL_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
