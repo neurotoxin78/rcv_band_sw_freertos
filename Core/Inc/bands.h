@@ -9,6 +9,7 @@
 #ifndef INC_BANDS_H_
 #define INC_BANDS_H_
 
-void displayBand();
+void displayBand(int band_index);
+void setBand(int band_index);
 
 #endif /* INC_BANDS_H_ */

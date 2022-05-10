@@ -19,12 +19,14 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "adc.h"
 #include "crc.h"
 #include "dma.h"
 #include "i2c.h"
 #include "rtc.h"
 #include "spi.h"
 #include "tim.h"
+#include "usb_device.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -32,7 +34,8 @@
 #include <string.h>
 #include "st7735.h"
 #include "fonts.h"
-#include "NeoPixel.h"
+#include "ARGB.h"
+#include "usbd_cdc_if.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,6 +45,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -64,6 +68,18 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void pixel(void){
+    ARGB_Init();  // Initialization
+
+    ARGB_Clear(); // Clear stirp
+    while (ARGB_Show() != ARGB_OK); // Update - Option 1
+
+    ARGB_SetBrightness(50);  // Set global brightness to 40%
+
+    ARGB_FillRGB(25, 0, 100); // Fill all the strip with Red
+    while (!ARGB_Show());
+}
+
 void Display_Init() {
     ST7735_Init();
     // Check border
@@ -76,7 +92,12 @@ void Display_Init() {
 }
 
 void loop() {
-
+	  uint8_t testDataToSend[8];
+	  for (uint8_t i = 0; i < 8; i++)
+	  {
+	    testDataToSend[i] = i;
+	  }
+	  CDC_Transmit_FS(testDataToSend, 8);
 }
 
 /* USER CODE END 0 */
@@ -117,9 +138,12 @@ int main(void)
   MX_DMA_Init();
   MX_RTC_Init();
   MX_TIM4_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
+  pixel();
   Display_Init();
+
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -166,7 +190,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLM = 25;
   RCC_OscInitStruct.PLL.PLLN = 192;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 3;
+  RCC_OscInitStruct.PLL.PLLQ = 4;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();

@@ -70,10 +70,14 @@ void Error_Handler(void);
 #define LCD_CS_GPIO_Port GPIOA
 #define ENC_CLK_Pin GPIO_PIN_6
 #define ENC_CLK_GPIO_Port GPIOA
+#define DP_INC_Pin GPIO_PIN_13
+#define DP_INC_GPIO_Port GPIOB
+#define DP_UD_Pin GPIO_PIN_14
+#define DP_UD_GPIO_Port GPIOB
+#define DP_CS_Pin GPIO_PIN_15
+#define DP_CS_GPIO_Port GPIOB
 #define ENC_DT_Pin GPIO_PIN_5
 #define ENC_DT_GPIO_Port GPIOB
-#define NEOPIXEL_Pin GPIO_PIN_9
-#define NEOPIXEL_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

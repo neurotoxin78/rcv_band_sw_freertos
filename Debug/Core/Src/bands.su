@@ -1,1 +1,2 @@
-../Core/Src/bands.c:37:6:displayBand	32	static
+../Core/Src/bands.c:40:6:displayBand	32	static
+../Core/Src/bands.c:59:6:setBand	32	static

@@ -31,7 +31,7 @@
 #include "tim.h"
 #include "rtc.h"
 #include "bands.h"
-#include "NeoPixel.h"
+
 
 /* USER CODE END Includes */
 
@@ -59,7 +59,7 @@ osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for displayTask */
 osThreadId_t displayTaskHandle;
@@ -95,6 +95,7 @@ void StartDefaultTask(void *argument);
 void StartDisplayTask(void *argument);
 void StartEncoderTask(void *argument);
 
+extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
@@ -159,15 +160,11 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
+  /* init code for USB_DEVICE */
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
 	/* Infinite loop */
-	uint8_t angle = 1;
-	const uint8_t angle_difference = 50;
-	uint32_t rgb_color = hsl_to_rgb(angle + (0 * angle_difference), 125, 255);
-	//led_set_RGB(0, (rgb_color >> 16) & 0xFF, (rgb_color >> 8) & 0xFF, rgb_color & 0xFF);
-	//led_set_RGB(0, (rgb_color >> 16), 0x00 & 0xFF, rgb_color & 0xFF);
-	led_set_all_RGBW(rgb_color,100,rgb_color,255);
-	led_render();
+
 	for (;;) {
 
 		  // Some delay
@@ -207,6 +204,7 @@ void StartDisplayTask(void *argument)
 				counter = 0;
 			}
 			displayBand(last_counter);
+			setBand(last_counter);
 		}else if (counter == 1){
 			if(last_counter != 0)
 			{
@@ -218,6 +216,7 @@ void StartDisplayTask(void *argument)
 				counter = 0;
 			}
 			displayBand(last_counter);
+			setBand(last_counter);
 		}else
 		{
 
