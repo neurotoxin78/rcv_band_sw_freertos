@@ -190,6 +190,7 @@ void StartDisplayTask(void *argument)
 	int16_t max_index = 5;
 	ST7735_FillScreenFast(ST7735_BLACK);
 	displayBand(last_counter);
+	setBand(last_counter);
 	for (;;) {
 		//Encoder Rotate
 		osMessageQueueGet(EncoderQueueHandle, &counter, 0, 0);

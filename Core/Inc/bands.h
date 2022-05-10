@@ -11,5 +11,6 @@
 
 void displayBand(int band_index);
 void setBand(int band_index);
+//void setResistance(int band_index);
 
 #endif /* INC_BANDS_H_ */

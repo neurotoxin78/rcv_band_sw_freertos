@@ -139,6 +139,7 @@ int main(void)
   MX_RTC_Init();
   MX_TIM4_Init();
   MX_ADC1_Init();
+  MX_TIM11_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
   pixel();
