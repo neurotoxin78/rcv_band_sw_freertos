@@ -52,9 +52,7 @@ void displayBand(int band_index)
         ST7735_FillRectangleFast(0,64,160,16,ST7735_COLOR565(50, 50, 50));
         ST7735_FillRectangleFast(0,0,160,26,ST7735_COLOR565(50, 50, 50));
         ST7735_WriteString(1, 2, band[band_index].name, Font_16x26, ST7735_COLOR565(255, 179, 0), ST7735_COLOR565(50, 50, 50));
-        //ST7735_WriteString(5, 26, "BAND", Font_7x10, ST7735_COLOR565(255, 179, 0), ST7735_COLOR565(10, 10, 10));
-        // Band Frequencies Wide
-       	//ST7735_WriteString(5, 26, "    ", Font_7x10, ST7735_COLOR565(255, 179, 0), ST7735_COLOR565(10, 10, 10));
+        // freq
        	sprintf(buff, "%s - %s", band[band_index].WminFreq, band[band_index].WmaxFreq);
        	ST7735_WriteString(0, 29, buff, Font_11x18, ST7735_COLOR565(66, 186, 255), ST7735_COLOR565(10, 10, 10));
        	sprintf(buff, "%s - %s", band[band_index].NminFreq, band[band_index].NmaxFreq);
