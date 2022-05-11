@@ -57,22 +57,35 @@ uint8_t *taskRunStatus[1024];
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
-const osThreadAttr_t defaultTask_attributes = { .name = "defaultTask",
-		.stack_size = 128 * 4, .priority = (osPriority_t) osPriorityLow, };
+const osThreadAttr_t defaultTask_attributes = {
+  .name = "defaultTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 /* Definitions for displayTask */
 osThreadId_t displayTaskHandle;
-const osThreadAttr_t displayTask_attributes = { .name = "displayTask",
-		.stack_size = 128 * 4, .priority = (osPriority_t) osPriorityNormal, };
+const osThreadAttr_t displayTask_attributes = {
+  .name = "displayTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* Definitions for encoderTask */
 osThreadId_t encoderTaskHandle;
-const osThreadAttr_t encoderTask_attributes = { .name = "encoderTask",
-		.stack_size = 128 * 4, .priority = (osPriority_t) osPriorityNormal, };
+const osThreadAttr_t encoderTask_attributes = {
+  .name = "encoderTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* Definitions for EncoderQueue */
 osMessageQueueId_t EncoderQueueHandle;
-const osMessageQueueAttr_t EncoderQueue_attributes = { .name = "EncoderQueue" };
+const osMessageQueueAttr_t EncoderQueue_attributes = {
+  .name = "EncoderQueue"
+};
 /* Definitions for ButtonQueue */
 osMessageQueueId_t ButtonQueueHandle;
-const osMessageQueueAttr_t ButtonQueue_attributes = { .name = "ButtonQueue" };
+const osMessageQueueAttr_t ButtonQueue_attributes = {
+  .name = "ButtonQueue"
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -120,60 +133,55 @@ void vApplicationIdleHook(void) {
 /* USER CODE END 2 */
 
 /**
- * @brief  FreeRTOS initialization
- * @param  None
- * @retval None
- */
+  * @brief  FreeRTOS initialization
+  * @param  None
+  * @retval None
+  */
 void MX_FREERTOS_Init(void) {
-	/* USER CODE BEGIN Init */
+  /* USER CODE BEGIN Init */
 
-	/* USER CODE END Init */
+  /* USER CODE END Init */
 
-	/* USER CODE BEGIN RTOS_MUTEX */
+  /* USER CODE BEGIN RTOS_MUTEX */
 	/* add mutexes, ... */
-	/* USER CODE END RTOS_MUTEX */
+  /* USER CODE END RTOS_MUTEX */
 
-	/* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
 	/* add semaphores, ... */
-	/* USER CODE END RTOS_SEMAPHORES */
+  /* USER CODE END RTOS_SEMAPHORES */
 
-	/* USER CODE BEGIN RTOS_TIMERS */
+  /* USER CODE BEGIN RTOS_TIMERS */
 	/* start timers, add new ones, ... */
-	/* USER CODE END RTOS_TIMERS */
+  /* USER CODE END RTOS_TIMERS */
 
-	/* Create the queue(s) */
-	/* creation of EncoderQueue */
-	EncoderQueueHandle = osMessageQueueNew(1, sizeof(uint16_t),
-			&EncoderQueue_attributes);
+  /* Create the queue(s) */
+  /* creation of EncoderQueue */
+  EncoderQueueHandle = osMessageQueueNew (1, sizeof(uint16_t), &EncoderQueue_attributes);
 
-	/* creation of ButtonQueue */
-	ButtonQueueHandle = osMessageQueueNew(1, sizeof(uint16_t),
-			&ButtonQueue_attributes);
+  /* creation of ButtonQueue */
+  ButtonQueueHandle = osMessageQueueNew (1, sizeof(uint16_t), &ButtonQueue_attributes);
 
-	/* USER CODE BEGIN RTOS_QUEUES */
+  /* USER CODE BEGIN RTOS_QUEUES */
 	/* add queues, ... */
-	/* USER CODE END RTOS_QUEUES */
+  /* USER CODE END RTOS_QUEUES */
 
-	/* Create the thread(s) */
-	/* creation of defaultTask */
-	defaultTaskHandle = osThreadNew(StartDefaultTask, NULL,
-			&defaultTask_attributes);
+  /* Create the thread(s) */
+  /* creation of defaultTask */
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-	/* creation of displayTask */
-	displayTaskHandle = osThreadNew(StartDisplayTask, NULL,
-			&displayTask_attributes);
+  /* creation of displayTask */
+  displayTaskHandle = osThreadNew(StartDisplayTask, NULL, &displayTask_attributes);
 
-	/* creation of encoderTask */
-	encoderTaskHandle = osThreadNew(StartEncoderTask, NULL,
-			&encoderTask_attributes);
+  /* creation of encoderTask */
+  encoderTaskHandle = osThreadNew(StartEncoderTask, NULL, &encoderTask_attributes);
 
-	/* USER CODE BEGIN RTOS_THREADS */
+  /* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
-	/* USER CODE END RTOS_THREADS */
+  /* USER CODE END RTOS_THREADS */
 
-	/* USER CODE BEGIN RTOS_EVENTS */
+  /* USER CODE BEGIN RTOS_EVENTS */
 	/* add events, ... */
-	/* USER CODE END RTOS_EVENTS */
+  /* USER CODE END RTOS_EVENTS */
 
 }
 
@@ -184,16 +192,20 @@ void MX_FREERTOS_Init(void) {
  * @retval None
  */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument) {
-	/* init code for USB_DEVICE */
-	MX_USB_DEVICE_Init();
-	/* USER CODE BEGIN StartDefaultTask */
+void StartDefaultTask(void *argument)
+{
+  /* init code for USB_DEVICE */
+  MX_USB_DEVICE_Init();
+  /* USER CODE BEGIN StartDefaultTask */
 	/* Infinite loop */
+  char buff[10];
 	for (;;) {
-		CDC_Transmit_FS(taskListStatus, sizeof(taskListStatus));
+		//CDC_Transmit_FS(taskListStatus, sizeof(taskListStatus));
+		sprintf(buff, "%lu", ulHighFrequencyTimerTicks);
+		CDC_Transmit_FS(buff, sizeof(buff));
 		osDelay(5000);
 	}
-	/* USER CODE END StartDefaultTask */
+  /* USER CODE END StartDefaultTask */
 }
 
 /* USER CODE BEGIN Header_StartDisplayTask */
@@ -203,8 +215,9 @@ void StartDefaultTask(void *argument) {
  * @retval None
  */
 /* USER CODE END Header_StartDisplayTask */
-void StartDisplayTask(void *argument) {
-	/* USER CODE BEGIN StartDisplayTask */
+void StartDisplayTask(void *argument)
+{
+  /* USER CODE BEGIN StartDisplayTask */
 	/* Infinite loop */
 	osStatus_t taskMessageHandler;
 	int32_t counter = 0;
@@ -251,7 +264,7 @@ void StartDisplayTask(void *argument) {
 		}
 		osDelay(1000);
 	}
-	/* USER CODE END StartDisplayTask */
+  /* USER CODE END StartDisplayTask */
 }
 
 /* USER CODE BEGIN Header_StartEncoderTask */
@@ -261,8 +274,9 @@ void StartDisplayTask(void *argument) {
  * @retval None
  */
 /* USER CODE END Header_StartEncoderTask */
-void StartEncoderTask(void *argument) {
-	/* USER CODE BEGIN StartEncoderTask */
+void StartEncoderTask(void *argument)
+{
+  /* USER CODE BEGIN StartEncoderTask */
 	/* Infinite loop */
 	int32_t prevCounter = 0;
 	int32_t counter = 0;
@@ -290,7 +304,7 @@ void StartEncoderTask(void *argument) {
 		}
 		osDelay(500);
 	}
-	/* USER CODE END StartEncoderTask */
+  /* USER CODE END StartEncoderTask */
 }
 
 /* Private application code --------------------------------------------------*/
