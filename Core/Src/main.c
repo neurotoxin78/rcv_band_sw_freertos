@@ -40,7 +40,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+volatile unsigned long ulHighFrequencyTimerTicks;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -140,8 +140,11 @@ int main(void)
   MX_TIM4_Init();
   MX_ADC1_Init();
   MX_TIM11_Init();
+  MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
+  HAL_TIM_Base_Start(&htim5);
+  HAL_TIM_Base_Start(&htim11);
   pixel();
   Display_Init();
 
@@ -227,7 +230,9 @@ void SystemClock_Config(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* USER CODE BEGIN Callback 0 */
-
+  if (htim->Instance == TIM5) {
+	  ulHighFrequencyTimerTicks++;
+  }
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM1) {
     HAL_IncTick();
