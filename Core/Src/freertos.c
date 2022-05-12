@@ -202,10 +202,10 @@ void StartDefaultTask(void *argument)
   char buff[10];
 	for (;;) {
 		//CDC_Transmit_FS(taskListStatus, sizeof(taskListStatus));
-		sprintf(buff, "%lu", ulHighFrequencyTimerTicks);
-		CDC_Transmit_FS(buff, sizeof(buff));
-		blink(0,0,150,200);
-		osDelay(5000);
+		//sprintf(buff, "%lu \r", ulHighFrequencyTimerTicks);
+		//CDC_Transmit_FS(buff, sizeof(buff));
+		//blink(0,0,150,200);
+		osDelay(100);
 	}
   /* USER CODE END StartDefaultTask */
 }

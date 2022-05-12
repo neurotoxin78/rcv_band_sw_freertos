@@ -67,14 +67,8 @@ void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN 0 */
 void Pixel_Init(void){
     ARGB_Init();  // Initialization
-
     ARGB_Clear(); // Clear stirp
     while (ARGB_Show() != ARGB_OK); // Update - Option 1
-
-    //ARGB_SetBrightness(50);  // Set global brightness to 40%
-
-    //ARGB_FillRGB(25, 0, 100); // Fill all the strip with Red
-    //while (!ARGB_Show());
 }
 
 void Display_Init() {
@@ -86,15 +80,6 @@ void Display_Init() {
     ST7735_WriteString(15, 0, "FM/AM/SW", Font_16x26, ST7735_COLOR565(255, 187, 51), ST7735_BLACK);
     ST7735_WriteString(34, 25, "reciever", Font_11x18, ST7735_COLOR565(0, 116, 199), ST7735_BLACK);
     HAL_Delay(2000);
-}
-
-void loop() {
-	  uint8_t testDataToSend[8];
-	  for (uint8_t i = 0; i < 8; i++)
-	  {
-	    testDataToSend[i] = i;
-	  }
-	  CDC_Transmit_FS(testDataToSend, 8);
 }
 
 /* USER CODE END 0 */
@@ -136,7 +121,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   MX_USB_DEVICE_Init();
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-  HAL_TIM_Base_Init(&htim1);
+  //HAL_TIM_Base_Init(&htim1);
   HAL_TIM_Base_Start_IT(&htim1);
   HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
   //HAL_TIM_Base_Start(&htim11);
@@ -226,9 +211,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* USER CODE BEGIN Callback 0 */
   if (htim->Instance == TIM1) {
-	  ulHighFrequencyTimerTicks++;
-	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-	  HAL_IncTick();
+
   }
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM5) {
