@@ -189,8 +189,8 @@ void TIM1_UP_TIM10_IRQHandler(void)
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
   ulHighFrequencyTimerTicks++;
-  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-  HAL_TIM_Base_Start_IT(&htim1);
+  //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+
 
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
 }

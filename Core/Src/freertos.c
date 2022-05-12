@@ -204,8 +204,9 @@ void StartDefaultTask(void *argument)
 		//CDC_Transmit_FS(taskListStatus, sizeof(taskListStatus));
 		//sprintf(buff, "%lu \r", ulHighFrequencyTimerTicks);
 		//CDC_Transmit_FS(buff, sizeof(buff));
-		//blink(0,0,150,200);
-		osDelay(100);
+		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+		//delay_us(1000);
+		//osDelay(100);
 	}
   /* USER CODE END StartDefaultTask */
 }
@@ -244,7 +245,7 @@ void StartDisplayTask(void *argument)
 					counter = 0;
 				}
 				displayBand(last_counter);
-				setBand(last_counter);
+				//setBand(last_counter);
 			} else if (counter == 1) {
 				if (last_counter != 0) {
 					last_counter -= 1;
@@ -254,7 +255,7 @@ void StartDisplayTask(void *argument)
 					counter = 0;
 				}
 				displayBand(last_counter);
-				setBand(last_counter);
+				//setBand(last_counter);
 			} else {
 
 			}

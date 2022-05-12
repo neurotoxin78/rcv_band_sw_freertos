@@ -79,7 +79,7 @@ void Error_Handler(void);
 #define ENC_DT_Pin GPIO_PIN_5
 #define ENC_DT_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
-
+void delay_us (uint16_t us);
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

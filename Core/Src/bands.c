@@ -6,6 +6,7 @@
  */
 #include <stdio.h>
 #include <bands.h>
+#include "main.h"
 #include "spi.h"
 #include "st7735.h"
 #include "fonts.h"
@@ -62,21 +63,7 @@ void displayBand(int band_index)
 
 }
 
-void delay_us(uint32_t us)
-{
-    uint16_t  t0 = TIM11->CNT;
 
-    while (us > 0) {
-        uint16_t t  = TIM11->CNT;
-        uint16_t dt = t - t0;
-
-        if (dt > us)
-            break;
-
-        us -= dt;
-        t0  = t;
-    }
-}
 
 void initDP(int CHIP)
 {
@@ -88,26 +75,25 @@ void setResistanceUP(int CHIP, uint8_t resistance, bool save)
 {
 	HAL_GPIO_WritePin(GPIOB, UD_PIN, GPIO_PIN_SET); // HIGH
 	HAL_GPIO_WritePin(GPIOB, INC_PIN, GPIO_PIN_SET); //HIGH
-	//vTaskDelayMS(300);
 	delay_us(300);
 	HAL_GPIO_WritePin(GPIOB, CHIP, GPIO_PIN_RESET); // LOW
     for (int i = 0; i < resistance; i++)
     {
         HAL_GPIO_WritePin(GPIOB, INC_PIN, GPIO_PIN_RESET); //LOW
         //vTaskDelayMS(300);
-    	delay_us(300);
+    	delay_us(3);
         HAL_GPIO_WritePin(GPIOB, INC_PIN, GPIO_PIN_SET); //HIGH
         //vTaskDelayMS(300);
-    	delay_us(300);
+    	delay_us(3);
     }
     if (save)
     {
     	HAL_GPIO_WritePin(GPIOB, INC_PIN, GPIO_PIN_SET); //HIGH
-    	delay_us(300);
+    	//delay_us(300);
     }else
     {
     	HAL_GPIO_WritePin(GPIOB, INC_PIN, GPIO_PIN_RESET); //LOW
-    	delay_us(300);
+    	//delay_us(300);
     }
 	delay_us(300);
     HAL_GPIO_WritePin(GPIOB, CHIP, GPIO_PIN_SET); // HIGH
