@@ -116,3 +116,26 @@ void blink(uint8_t r, uint8_t g, uint8_t b, uint8_t milis)
     ARGB_Clear(); // Clear stirp
     while (ARGB_Show() != ARGB_OK); // Update - Option 1
 }
+
+void fadeIN(uint8_t min, uint8_t max, uint8_t speed)
+{
+	uint16_t j;
+	for (j = min; j < max; j++) {
+	    ARGB_FillRGB(0, 0, j); // Fill all the strip with Red
+	    while (!ARGB_Show());
+	    delay_us(speed * 1000);
+	}
+	ARGB_Clear(); // Clear stirp
+	while (ARGB_Show() != ARGB_OK); // Update - Option 1
+}
+void fadeOUT(uint8_t min, uint8_t max, uint8_t speed)
+{
+	uint16_t j;
+	for (j = max; j > min; j--) {
+	    ARGB_FillRGB(0, 0, j); // Fill all the strip with Red
+	    while (!ARGB_Show());
+	    delay_us(speed * 1000);
+	}
+	ARGB_Clear(); // Clear stirp
+	while (ARGB_Show() != ARGB_OK); // Update - Option 1
+}

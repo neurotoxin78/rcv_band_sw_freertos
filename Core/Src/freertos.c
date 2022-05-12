@@ -206,7 +206,9 @@ void StartDefaultTask(void *argument)
 		//CDC_Transmit_FS(buff, sizeof(buff));
 		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 		//delay_us(1000);
-		//osDelay(100);
+		//fadeIN(0,100,2);
+		//fadeOUT(0,100,2);
+		osDelay(1000);
 	}
   /* USER CODE END StartDefaultTask */
 }
@@ -292,11 +294,15 @@ void StartEncoderTask(void *argument)
 			if (currCounter > prevCounter) {
 				counter = 1;
 				osMessageQueuePut(EncoderQueueHandle, &counter, 0, 0);
-				blink(255,0,50,100);
+				osDelay(250);
+				fadeIN(0,100,1);
+				fadeOUT(0,100,1);
 			} else if (currCounter < prevCounter) {
 				counter = 2;
 				osMessageQueuePut(EncoderQueueHandle, &counter, 0, 0);
-				blink(255,0,50,100);
+				osDelay(250);
+				fadeIN(0,100,1);
+				fadeOUT(0,100,1);
 			} else {
 
 			}
