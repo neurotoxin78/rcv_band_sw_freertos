@@ -10,6 +10,7 @@
 #include "st7735.h"
 #include "fonts.h"
 #include <string.h>
+#include "ARGB.h"
 #include "gpio.h"
 #include "FreeRTOS.h"
 #include "cmsis_os.h"
@@ -121,4 +122,11 @@ void setBand(int band_index)
 	//setResistanceUP(CS_PIN, ticks, false);
 }
 
-
+void blink(uint8_t r, uint8_t g, uint8_t b, uint8_t milis)
+{
+    ARGB_FillRGB(r, g, b); // Fill all the strip with Red
+    while (!ARGB_Show());
+    osDelay(milis);
+    ARGB_Clear(); // Clear stirp
+    while (ARGB_Show() != ARGB_OK); // Update - Option 1
+}

@@ -34,7 +34,7 @@ Core/Src/bands.o: ../Core/Src/bands.c ../Core/Inc/bands.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
  ../Core/Inc/st7735.h ../Core/Inc/fonts.h ../Core/Inc/fonts.h \
- ../Core/Inc/gpio.h \
+ ../Core/Inc/ARGB.h ../Core/Inc/libs.h ../Core/Inc/gpio.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
@@ -85,6 +85,8 @@ Core/Src/bands.o: ../Core/Src/bands.c ../Core/Inc/bands.h \
 ../Core/Inc/st7735.h:
 ../Core/Inc/fonts.h:
 ../Core/Inc/fonts.h:
+../Core/Inc/ARGB.h:
+../Core/Inc/libs.h:
 ../Core/Inc/gpio.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:

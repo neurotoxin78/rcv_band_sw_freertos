@@ -32,6 +32,7 @@
 #include "rtc.h"
 #include "bands.h"
 #include "usbd_cdc_if.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -203,6 +204,7 @@ void StartDefaultTask(void *argument)
 		//CDC_Transmit_FS(taskListStatus, sizeof(taskListStatus));
 		sprintf(buff, "%lu", ulHighFrequencyTimerTicks);
 		CDC_Transmit_FS(buff, sizeof(buff));
+		blink(0,0,150,200);
 		osDelay(5000);
 	}
   /* USER CODE END StartDefaultTask */
@@ -289,9 +291,11 @@ void StartEncoderTask(void *argument)
 			if (currCounter > prevCounter) {
 				counter = 1;
 				osMessageQueuePut(EncoderQueueHandle, &counter, 0, 0);
+				blink(255,0,50,100);
 			} else if (currCounter < prevCounter) {
 				counter = 2;
 				osMessageQueuePut(EncoderQueueHandle, &counter, 0, 0);
+				blink(255,0,50,100);
 			} else {
 
 			}

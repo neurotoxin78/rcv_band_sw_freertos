@@ -65,16 +65,16 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void pixel(void){
+void Pixel_Init(void){
     ARGB_Init();  // Initialization
 
     ARGB_Clear(); // Clear stirp
     while (ARGB_Show() != ARGB_OK); // Update - Option 1
 
-    ARGB_SetBrightness(50);  // Set global brightness to 40%
+    //ARGB_SetBrightness(50);  // Set global brightness to 40%
 
-    ARGB_FillRGB(25, 0, 100); // Fill all the strip with Red
-    while (!ARGB_Show());
+    //ARGB_FillRGB(25, 0, 100); // Fill all the strip with Red
+    //while (!ARGB_Show());
 }
 
 void Display_Init() {
@@ -140,7 +140,7 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim1);
   HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
   //HAL_TIM_Base_Start(&htim11);
-  pixel();
+  Pixel_Init();
   Display_Init();
 
   /* USER CODE END 2 */

@@ -1,5 +1,6 @@
-../Core/Src/bands.c:47:6:displayBand	32	static
-../Core/Src/bands.c:64:6:delay_us	24	static
-../Core/Src/bands.c:80:6:initDP	16	static
-../Core/Src/bands.c:86:6:setResistanceUP	24	static
-../Core/Src/bands.c:116:6:setBand	32	static
+../Core/Src/bands.c:48:6:displayBand	32	static
+../Core/Src/bands.c:65:6:delay_us	24	static
+../Core/Src/bands.c:81:6:initDP	16	static
+../Core/Src/bands.c:87:6:setResistanceUP	24	static
+../Core/Src/bands.c:117:6:setBand	32	static
+../Core/Src/bands.c:125:6:blink	24	static
