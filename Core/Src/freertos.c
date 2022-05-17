@@ -77,6 +77,13 @@ const osThreadAttr_t encoderTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for beaconTask */
+osThreadId_t beaconTaskHandle;
+const osThreadAttr_t beaconTask_attributes = {
+  .name = "beaconTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 /* Definitions for EncoderQueue */
 osMessageQueueId_t EncoderQueueHandle;
 const osMessageQueueAttr_t EncoderQueue_attributes = {
@@ -97,6 +104,7 @@ extern volatile unsigned long ulHighFrequencyTimerTicks;
 void StartDefaultTask(void *argument);
 void StartDisplayTask(void *argument);
 void StartEncoderTask(void *argument);
+void StartBeaconTask(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -175,6 +183,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of encoderTask */
   encoderTaskHandle = osThreadNew(StartEncoderTask, NULL, &encoderTask_attributes);
+
+  /* creation of beaconTask */
+  beaconTaskHandle = osThreadNew(StartBeaconTask, NULL, &beaconTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
@@ -316,6 +327,26 @@ void StartEncoderTask(void *argument)
 		osDelay(500);
 	}
   /* USER CODE END StartEncoderTask */
+}
+
+/* USER CODE BEGIN Header_StartBeaconTask */
+/**
+* @brief Function implementing the beaconTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartBeaconTask */
+void StartBeaconTask(void *argument)
+{
+  /* USER CODE BEGIN StartBeaconTask */
+  /* Infinite loop */
+  for(;;)
+  {
+		fadeIN(0,100,1);
+		fadeOUT(0,100,1);
+		osDelay(5000);
+  }
+  /* USER CODE END StartBeaconTask */
 }
 
 /* Private application code --------------------------------------------------*/
