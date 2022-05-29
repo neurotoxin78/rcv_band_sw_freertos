@@ -20,6 +20,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "dma.h"
+#include "i2c.h"
 #include "rtc.h"
 #include "spi.h"
 #include "tim.h"
@@ -33,6 +34,7 @@
 #include "fonts.h"
 #include "ARGB.h"
 #include "usbd_cdc_if.h"
+#include "si5351.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -118,6 +120,7 @@ int main(void)
   MX_RTC_Init();
   MX_TIM4_Init();
   MX_TIM1_Init();
+  MX_I2C3_Init();
   /* USER CODE BEGIN 2 */
   MX_USB_DEVICE_Init();
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
@@ -127,7 +130,7 @@ int main(void)
   //HAL_TIM_Base_Start(&htim11);
   Pixel_Init();
   Display_Init();
-
+  si5351_Init(0);
   /* USER CODE END 2 */
 
   /* Init scheduler */
