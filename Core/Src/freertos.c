@@ -123,6 +123,11 @@ __weak void configureTimerForRunTimeStats(void) {
 __weak unsigned long getRunTimeCounterValue(void) {
 	return ulHighFrequencyTimerTicks;
 }
+
+extern uint32_t current_freq;
+extern const int current_band;
+
+
 /* USER CODE END 1 */
 
 /* USER CODE BEGIN 2 */
@@ -136,7 +141,7 @@ void vApplicationIdleHook(void) {
 	 important that vApplicationIdleHook() is permitted to return to its calling
 	 function, because it is the responsibility of the idle task to clean up
 	 memory allocated by the kernel to any task that has since been deleted. */
-	vTaskList(taskListStatus);
+	//vTaskList(taskListStatus);
 }
 
 /* USER CODE END 2 */
@@ -210,7 +215,7 @@ void StartDefaultTask(void *argument)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
 	/* Infinite loop */
-  char buff[10];
+
 	for (;;) {
 		//CDC_Transmit_FS(taskListStatus, sizeof(taskListStatus));
 		//sprintf(buff, "%lu \r", ulHighFrequencyTimerTicks);
@@ -242,7 +247,7 @@ void StartDisplayTask(void *argument)
 	int16_t max_index = 5;
 	ST7735_FillScreenFast(ST7735_BLACK);
 	displayBand(last_counter);
-	setBand(last_counter);
+
 	for (;;) {
 		//Encoder Rotate
 		taskMessageHandler = osMessageQueueGet(EncoderQueueHandle, &counter, 0,
@@ -251,6 +256,7 @@ void StartDisplayTask(void *argument)
 		{
 			if (counter == 2) {
 				if (last_counter != max_index - 1) {
+					current_freq += 1;
 					last_counter += 1;
 					counter = 0;
 				} else {
@@ -261,6 +267,7 @@ void StartDisplayTask(void *argument)
 				//setBand(last_counter);
 			} else if (counter == 1) {
 				if (last_counter != 0) {
+					current_freq -= 1;
 					last_counter -= 1;
 					counter = 0;
 				} else {
@@ -305,15 +312,11 @@ void StartEncoderTask(void *argument)
 			if (currCounter > prevCounter) {
 				counter = 1;
 				osMessageQueuePut(EncoderQueueHandle, &counter, 0, 0);
-				osDelay(250);
-				fadeIN(0,100,1);
-				fadeOUT(0,100,1);
+				osDelay(5);
 			} else if (currCounter < prevCounter) {
 				counter = 2;
 				osMessageQueuePut(EncoderQueueHandle, &counter, 0, 0);
-				osDelay(250);
-				fadeIN(0,100,1);
-				fadeOUT(0,100,1);
+				osDelay(5);
 			} else {
 
 			}
@@ -324,7 +327,7 @@ void StartEncoderTask(void *argument)
 			buttonPressed[buttonNumber] = 0;
 			osMessageQueuePut(ButtonQueueHandle, &buttonSend, 0, 0);
 		}
-		osDelay(500);
+		osDelay(5);
 	}
   /* USER CODE END StartEncoderTask */
 }
@@ -342,9 +345,8 @@ void StartBeaconTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-		fadeIN(0,100,1);
-		fadeOUT(0,100,1);
-		osDelay(5000);
+	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+		osDelay(1000);
   }
   /* USER CODE END StartBeaconTask */
 }

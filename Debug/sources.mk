@@ -33,7 +33,6 @@ CPP_DEPS :=
 SUBDIRS := \
 Core/Src \
 Core/Startup \
-Core/ThreadSafe \
 Drivers/STM32F4xx_HAL_Driver/Src \
 Drivers/si5351 \
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src \

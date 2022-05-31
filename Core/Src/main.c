@@ -19,7 +19,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-#include "dma.h"
 #include "i2c.h"
 #include "rtc.h"
 #include "spi.h"
@@ -32,7 +31,6 @@
 #include <string.h>
 #include "st7735.h"
 #include "fonts.h"
-#include "ARGB.h"
 #include "usbd_cdc_if.h"
 #include "si5351.h"
 /* USER CODE END Includes */
@@ -40,6 +38,8 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 volatile unsigned long ulHighFrequencyTimerTicks;
+uint32_t current_freq = 0;
+int current_band = 0;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -67,12 +67,6 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void Pixel_Init(void){
-    ARGB_Init();  // Initialization
-    ARGB_Clear(); // Clear stirp
-    while (ARGB_Show() != ARGB_OK); // Update - Option 1
-}
-
 void Display_Init() {
     ST7735_Init();
     // Check border
@@ -116,7 +110,6 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI1_Init();
   MX_TIM3_Init();
-  MX_DMA_Init();
   MX_RTC_Init();
   MX_TIM4_Init();
   MX_TIM1_Init();
@@ -128,9 +121,10 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim1);
   HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
   //HAL_TIM_Base_Start(&htim11);
-  Pixel_Init();
   Display_Init();
   si5351_Init(0);
+  si5351_SetupCLK0(7000000, SI5351_DRIVE_STRENGTH_4MA);
+  si5351_EnableOutputs(1 << 0);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -188,11 +182,11 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV2;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
     Error_Handler();
   }
@@ -208,7 +202,7 @@ void delay_us (uint16_t us)
 
 /**
   * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM5 interrupt took place, inside
+  * @note   This function is called  when TIM11 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
   * a global variable "uwTick" used as application time base.
   * @param  htim : TIM handle
@@ -221,7 +215,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
   }
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM5) {
+  if (htim->Instance == TIM11) {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */

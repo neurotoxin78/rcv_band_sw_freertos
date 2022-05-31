@@ -1,7 +1,1 @@
-../Core/Src/bands.c:49:6:displayBand	32	static
-../Core/Src/bands.c:68:6:initDP	16	static
-../Core/Src/bands.c:74:6:setResistanceUP	24	static
-../Core/Src/bands.c:103:6:setBand	32	static
-../Core/Src/bands.c:111:6:blink	24	static
-../Core/Src/bands.c:120:6:fadeIN	24	static
-../Core/Src/bands.c:131:6:fadeOUT	24	static
+../Core/Src/bands.c:33:6:displayBand	16	static
