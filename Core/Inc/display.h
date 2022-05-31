@@ -9,6 +9,7 @@
 #ifndef INC_BANDS_H_
 #define INC_BANDS_H_
 
-void displayBand(int band_index);
+void displayFrequency(uint32_t freq);
+void displayBackgrounds();
 
 #endif /* INC_BANDS_H_ */

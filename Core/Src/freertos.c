@@ -30,7 +30,7 @@
 #include "fonts.h"
 #include "tim.h"
 #include "rtc.h"
-#include "bands.h"
+#include "display.h"
 #include "usbd_cdc_if.h"
 
 /* USER CODE END Includes */
@@ -58,42 +58,26 @@ uint8_t *taskRunStatus[1024];
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
-const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
-};
+const osThreadAttr_t defaultTask_attributes = { .name = "defaultTask",
+		.stack_size = 128 * 4, .priority = (osPriority_t) osPriorityLow, };
 /* Definitions for displayTask */
 osThreadId_t displayTaskHandle;
-const osThreadAttr_t displayTask_attributes = {
-  .name = "displayTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
+const osThreadAttr_t displayTask_attributes = { .name = "displayTask",
+		.stack_size = 128 * 4, .priority = (osPriority_t) osPriorityNormal, };
 /* Definitions for encoderTask */
 osThreadId_t encoderTaskHandle;
-const osThreadAttr_t encoderTask_attributes = {
-  .name = "encoderTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
+const osThreadAttr_t encoderTask_attributes = { .name = "encoderTask",
+		.stack_size = 128 * 4, .priority = (osPriority_t) osPriorityNormal, };
 /* Definitions for beaconTask */
 osThreadId_t beaconTaskHandle;
-const osThreadAttr_t beaconTask_attributes = {
-  .name = "beaconTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
-};
+const osThreadAttr_t beaconTask_attributes = { .name = "beaconTask",
+		.stack_size = 128 * 4, .priority = (osPriority_t) osPriorityLow, };
 /* Definitions for EncoderQueue */
 osMessageQueueId_t EncoderQueueHandle;
-const osMessageQueueAttr_t EncoderQueue_attributes = {
-  .name = "EncoderQueue"
-};
+const osMessageQueueAttr_t EncoderQueue_attributes = { .name = "EncoderQueue" };
 /* Definitions for ButtonQueue */
 osMessageQueueId_t ButtonQueueHandle;
-const osMessageQueueAttr_t ButtonQueue_attributes = {
-  .name = "ButtonQueue"
-};
+const osMessageQueueAttr_t ButtonQueue_attributes = { .name = "ButtonQueue" };
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -124,10 +108,29 @@ __weak unsigned long getRunTimeCounterValue(void) {
 	return ulHighFrequencyTimerTicks;
 }
 
+typedef struct {
+	const char *name;
+	const uint16_t *step; // Min. frequency value for the band (unit 0.01Hz)
+} Step;
+
+Step step[7] = {
+		{ "1Hz ", 1 }, // Step
+		{ "10Hz ", 10 }, { "100Hz ", 100 }, { "500Hz ", 500 },
+		{ "1kHz ", 1000 }, { "5kHz ", 5000 }, { "10kHz ", 10000 }, };
+const int lastStep = (sizeof step / sizeof(Step)) - 1;
+
+typedef struct {
+	const char *name;
+	const uint32_t *minFreq; // Min. frequency value for the band (unit 0.01Hz)
+	const uint32_t *maxFreq; // Max. frequency value for the band (unit 0.01Hz)
+} Band;
+
+Band band[2] = { { "40m ", 7000000, 7200000 }, // 100KHz to 1700KHz
+		{ "20m ", 14000000, 14350000 }, };
+const int lastBand = (sizeof band / sizeof(Band)) - 1;
 extern uint32_t current_freq;
-extern const int current_band;
-
-
+extern uint16_t current_step;
+extern int current_band;
 /* USER CODE END 1 */
 
 /* USER CODE BEGIN 2 */
@@ -147,58 +150,64 @@ void vApplicationIdleHook(void) {
 /* USER CODE END 2 */
 
 /**
-  * @brief  FreeRTOS initialization
-  * @param  None
-  * @retval None
-  */
+ * @brief  FreeRTOS initialization
+ * @param  None
+ * @retval None
+ */
 void MX_FREERTOS_Init(void) {
-  /* USER CODE BEGIN Init */
+	/* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+	/* USER CODE END Init */
 
-  /* USER CODE BEGIN RTOS_MUTEX */
+	/* USER CODE BEGIN RTOS_MUTEX */
 	/* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
+	/* USER CODE END RTOS_MUTEX */
 
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
+	/* USER CODE BEGIN RTOS_SEMAPHORES */
 	/* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
+	/* USER CODE END RTOS_SEMAPHORES */
 
-  /* USER CODE BEGIN RTOS_TIMERS */
+	/* USER CODE BEGIN RTOS_TIMERS */
 	/* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
+	/* USER CODE END RTOS_TIMERS */
 
-  /* Create the queue(s) */
-  /* creation of EncoderQueue */
-  EncoderQueueHandle = osMessageQueueNew (1, sizeof(uint16_t), &EncoderQueue_attributes);
+	/* Create the queue(s) */
+	/* creation of EncoderQueue */
+	EncoderQueueHandle = osMessageQueueNew(1, sizeof(uint16_t),
+			&EncoderQueue_attributes);
 
-  /* creation of ButtonQueue */
-  ButtonQueueHandle = osMessageQueueNew (1, sizeof(uint16_t), &ButtonQueue_attributes);
+	/* creation of ButtonQueue */
+	ButtonQueueHandle = osMessageQueueNew(1, sizeof(uint16_t),
+			&ButtonQueue_attributes);
 
-  /* USER CODE BEGIN RTOS_QUEUES */
+	/* USER CODE BEGIN RTOS_QUEUES */
 	/* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
+	/* USER CODE END RTOS_QUEUES */
 
-  /* Create the thread(s) */
-  /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+	/* Create the thread(s) */
+	/* creation of defaultTask */
+	defaultTaskHandle = osThreadNew(StartDefaultTask, NULL,
+			&defaultTask_attributes);
 
-  /* creation of displayTask */
-  displayTaskHandle = osThreadNew(StartDisplayTask, NULL, &displayTask_attributes);
+	/* creation of displayTask */
+	displayTaskHandle = osThreadNew(StartDisplayTask, NULL,
+			&displayTask_attributes);
 
-  /* creation of encoderTask */
-  encoderTaskHandle = osThreadNew(StartEncoderTask, NULL, &encoderTask_attributes);
+	/* creation of encoderTask */
+	encoderTaskHandle = osThreadNew(StartEncoderTask, NULL,
+			&encoderTask_attributes);
 
-  /* creation of beaconTask */
-  beaconTaskHandle = osThreadNew(StartBeaconTask, NULL, &beaconTask_attributes);
+	/* creation of beaconTask */
+	beaconTaskHandle = osThreadNew(StartBeaconTask, NULL,
+			&beaconTask_attributes);
 
-  /* USER CODE BEGIN RTOS_THREADS */
+	/* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
+	/* USER CODE END RTOS_THREADS */
 
-  /* USER CODE BEGIN RTOS_EVENTS */
+	/* USER CODE BEGIN RTOS_EVENTS */
 	/* add events, ... */
-  /* USER CODE END RTOS_EVENTS */
+	/* USER CODE END RTOS_EVENTS */
 
 }
 
@@ -209,24 +218,18 @@ void MX_FREERTOS_Init(void) {
  * @retval None
  */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument)
-{
-  /* init code for USB_DEVICE */
-  MX_USB_DEVICE_Init();
-  /* USER CODE BEGIN StartDefaultTask */
+void StartDefaultTask(void *argument) {
+	/* init code for USB_DEVICE */
+	MX_USB_DEVICE_Init();
+	/* USER CODE BEGIN StartDefaultTask */
 	/* Infinite loop */
-
+	current_freq = band[current_band].minFreq;
+	current_step = step[2].step;
 	for (;;) {
-		//CDC_Transmit_FS(taskListStatus, sizeof(taskListStatus));
-		//sprintf(buff, "%lu \r", ulHighFrequencyTimerTicks);
-		//CDC_Transmit_FS(buff, sizeof(buff));
-		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-		//delay_us(1000);
-		//fadeIN(0,100,2);
-		//fadeOUT(0,100,2);
+
 		osDelay(1000);
 	}
-  /* USER CODE END StartDefaultTask */
+	/* USER CODE END StartDefaultTask */
 }
 
 /* USER CODE BEGIN Header_StartDisplayTask */
@@ -236,58 +239,14 @@ void StartDefaultTask(void *argument)
  * @retval None
  */
 /* USER CODE END Header_StartDisplayTask */
-void StartDisplayTask(void *argument)
-{
-  /* USER CODE BEGIN StartDisplayTask */
+void StartDisplayTask(void *argument) {
+	/* USER CODE BEGIN StartDisplayTask */
 	/* Infinite loop */
-	osStatus_t taskMessageHandler;
-	int32_t counter = 0;
-	int16_t button = 0;
-	int32_t last_counter = 0;
-	int16_t max_index = 5;
-	ST7735_FillScreenFast(ST7735_BLACK);
-	displayBand(last_counter);
-
 	for (;;) {
-		//Encoder Rotate
-		taskMessageHandler = osMessageQueueGet(EncoderQueueHandle, &counter, 0,
-				0);
-		if (taskMessageHandler == osOK)
-		{
-			if (counter == 2) {
-				if (last_counter != max_index - 1) {
-					current_freq += 1;
-					last_counter += 1;
-					counter = 0;
-				} else {
-					last_counter = 0;
-					counter = 0;
-				}
-				displayBand(last_counter);
-				//setBand(last_counter);
-			} else if (counter == 1) {
-				if (last_counter != 0) {
-					current_freq -= 1;
-					last_counter -= 1;
-					counter = 0;
-				} else {
-					last_counter = max_index - 1;
-					counter = 0;
-				}
-				displayBand(last_counter);
-				//setBand(last_counter);
-			} else {
 
-			}
-		}
-		//Button click
-		osMessageQueueGet(ButtonQueueHandle, &button, 0, 0);
-		if (button) {
-
-		}
 		osDelay(1000);
 	}
-  /* USER CODE END StartDisplayTask */
+	/* USER CODE END StartDisplayTask */
 }
 
 /* USER CODE BEGIN Header_StartEncoderTask */
@@ -297,25 +256,46 @@ void StartDisplayTask(void *argument)
  * @retval None
  */
 /* USER CODE END Header_StartEncoderTask */
-void StartEncoderTask(void *argument)
-{
-  /* USER CODE BEGIN StartEncoderTask */
+void StartEncoderTask(void *argument) {
+	/* USER CODE BEGIN StartEncoderTask */
 	/* Infinite loop */
 	int32_t prevCounter = 0;
 	int32_t counter = 0;
 	uint8_t buttonNumber = 0;
 	uint8_t buttonSend = 1;
+	/*  */
+	uint32_t max_freq = band[current_band].maxFreq;
+	uint32_t min_freq = band[current_band].minFreq;
+	current_freq = min_freq;
+	/* */
+	ST7735_FillScreenFast(ST7735_BLACK);
+	displayBackgrounds();
+	ST7735_WriteString(1, 2, band[current_band].name, Font_16x26, ST7735_COLOR565(255, 179, 0), ST7735_COLOR565(50, 50, 50));
+	displayFrequency(current_freq);
+	/* */
 	for (;;) {
 		int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
 		currCounter = 32767 - ((currCounter - 1) & 0xFFFF) / 2;
 		if (currCounter != prevCounter) {
 			if (currCounter > prevCounter) {
-				counter = 1;
-				osMessageQueuePut(EncoderQueueHandle, &counter, 0, 0);
+				if (current_freq != max_freq) {
+					current_freq += current_step;
+					counter = 0;
+				} else {
+					current_freq = min_freq;
+					counter = 0;
+				}
+				displayFrequency(current_freq);
 				osDelay(5);
 			} else if (currCounter < prevCounter) {
-				counter = 2;
-				osMessageQueuePut(EncoderQueueHandle, &counter, 0, 0);
+				if (current_freq != min_freq) {
+					current_freq -= current_step;
+					counter = 0;
+				} else {
+					current_freq = max_freq;
+					counter = 0;
+				}
+				displayFrequency(current_freq);
 				osDelay(5);
 			} else {
 
@@ -325,30 +305,28 @@ void StartEncoderTask(void *argument)
 		// Button
 		if (buttonPressed[buttonNumber]) {
 			buttonPressed[buttonNumber] = 0;
-			osMessageQueuePut(ButtonQueueHandle, &buttonSend, 0, 0);
+			//osMessageQueuePut(ButtonQueueHandle, &buttonSend, 0, 0);
 		}
 		osDelay(5);
 	}
-  /* USER CODE END StartEncoderTask */
+	/* USER CODE END StartEncoderTask */
 }
 
 /* USER CODE BEGIN Header_StartBeaconTask */
 /**
-* @brief Function implementing the beaconTask thread.
-* @param argument: Not used
-* @retval None
-*/
+ * @brief Function implementing the beaconTask thread.
+ * @param argument: Not used
+ * @retval None
+ */
 /* USER CODE END Header_StartBeaconTask */
-void StartBeaconTask(void *argument)
-{
-  /* USER CODE BEGIN StartBeaconTask */
-  /* Infinite loop */
-  for(;;)
-  {
-	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+void StartBeaconTask(void *argument) {
+	/* USER CODE BEGIN StartBeaconTask */
+	/* Infinite loop */
+	for (;;) {
+		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 		osDelay(1000);
-  }
-  /* USER CODE END StartBeaconTask */
+	}
+	/* USER CODE END StartBeaconTask */
 }
 
 /* Private application code --------------------------------------------------*/

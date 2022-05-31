@@ -1,4 +1,4 @@
-"./Core/Src/bands.o"
+"./Core/Src/display.o"
 "./Core/Src/fonts.o"
 "./Core/Src/freertos.o"
 "./Core/Src/gpio.o"
