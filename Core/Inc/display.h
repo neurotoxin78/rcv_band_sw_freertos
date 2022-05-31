@@ -11,5 +11,7 @@
 
 void displayFrequency(uint32_t freq);
 void displayBackgrounds();
+void displayBand(int band);
+void displayStep(int step);
 
 #endif /* INC_BANDS_H_ */

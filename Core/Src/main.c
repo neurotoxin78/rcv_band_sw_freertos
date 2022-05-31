@@ -40,7 +40,7 @@
 volatile unsigned long ulHighFrequencyTimerTicks;
 uint32_t current_freq = 0;
 uint16_t current_step = 2;
-int current_band = 0;
+int current_band = 1;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/

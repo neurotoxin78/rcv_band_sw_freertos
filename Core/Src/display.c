@@ -18,26 +18,41 @@
 
 char buff[20];
 
-void displayBackgrounds()
-{
-    ST7735_FillRectangleFast(0,0,160,80,ST7735_COLOR565(10, 10, 10));
-    ST7735_FillRectangleFast(0,64,160,16,ST7735_COLOR565(50, 50, 50));
-    ST7735_FillRectangleFast(0,0,160,26,ST7735_COLOR565(50, 50, 50));
+uint16_t light_color = ST7735_COLOR565(125, 160, 175);
+uint16_t dark_color = ST7735_COLOR565(40, 80, 130);
+
+void displayBackgrounds() {
+	/* backgriund */
+	ST7735_FillRectangleFast(0, 0, 160, 80, light_color);
+	/* down string */
+	ST7735_FillRectangleFast(0, 64, 160, 16, dark_color);
+	/* up string */
+	ST7735_FillRectangleFast(0, 0, 160, 20, dark_color);
+	/* labels */
+	ST7735_WriteString(1, 6, "BAND",Font_7x10, light_color, dark_color);
+	ST7735_WriteString(72, 6,"STEP",Font_7x10, light_color, dark_color);
+    ST7735_WriteString(2, 35, "VFO", Font_7x10, dark_color, light_color);
+    ST7735_WriteString(2, 43, " Hz", Font_7x10, dark_color, light_color);
 }
 
-void displayFrequency(uint32_t freq)
+void displayBand(int band)
 {
-    //if(band_index != lastBand + 1 )
-    //{
-
-        //ST7735_WriteString(1, 2, band[band_index].name, Font_16x26, ST7735_COLOR565(255, 179, 0), ST7735_COLOR565(50, 50, 50));
-        // freq
-       	sprintf(buff, "%d", freq);
-       	ST7735_WriteString(0, 34, buff, Font_16x26, ST7735_COLOR565(66, 186, 255), ST7735_COLOR565(10, 10, 10));
- //      	sprintf(buff, "%s - %s", band[band_index].NminFreq, band[band_index].NmaxFreq);
- //      	ST7735_WriteString(0, 46, buff, Font_11x18, ST7735_COLOR565(66, 186, 255), ST7735_COLOR565(10, 10, 10));
- //   }
-
+	ST7735_WriteString(35, 2, band, Font_11x18, light_color, dark_color);
 }
 
+void displayStep(int step)
+{
+	ST7735_WriteString(104, 2, step, Font_11x18, light_color, dark_color);
+}
+
+void displayFrequency(uint32_t freq) {
+	uint16_t th, dig, mi;
+	th = freq%1000;
+	dig = (freq / 1000)%1000;
+	mi = (freq / 1000000);
+	sprintf(buff, "%02d.%03d",mi, dig);
+	ST7735_WriteString(26, 32, buff, Font_16x26, dark_color, light_color);
+	sprintf(buff, "%03d",th);
+	ST7735_WriteString(125, 32, buff, Font_11x18, dark_color, light_color);
+}
 
