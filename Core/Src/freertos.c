@@ -70,13 +70,6 @@ const osThreadAttr_t encoderTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for beaconTask */
-osThreadId_t beaconTaskHandle;
-const osThreadAttr_t beaconTask_attributes = {
-  .name = "beaconTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
-};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -86,7 +79,6 @@ extern volatile unsigned long ulHighFrequencyTimerTicks;
 
 void StartDefaultTask(void *argument);
 void StartEncoderTask(void *argument);
-void StartBeaconTask(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -180,9 +172,6 @@ void MX_FREERTOS_Init(void) {
   /* creation of encoderTask */
   encoderTaskHandle = osThreadNew(StartEncoderTask, NULL, &encoderTask_attributes);
 
-  /* creation of beaconTask */
-  beaconTaskHandle = osThreadNew(StartBeaconTask, NULL, &beaconTask_attributes);
-
   /* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -209,7 +198,7 @@ void StartDefaultTask(void *argument)
 	current_freq = band[current_band].minFreq;
 	current_step = step[current_step].step;
 	for (;;) {
-
+		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 		osDelay(1000);
 	}
   /* USER CODE END StartDefaultTask */
@@ -233,7 +222,7 @@ void StartEncoderTask(void *argument)
 	uint32_t min_freq = band[current_band].minFreq;
 	current_freq = min_freq;
 	/* */
-	ST7735_FillScreenFast(ST7735_BLACK);
+	//ST7735_FillScreenFast(ST7735_BLACK);
 	displayBackgrounds();
 	displayBand(band[current_band].name);
 	displayStep(step[current_step].name);
@@ -272,24 +261,6 @@ void StartEncoderTask(void *argument)
 		osDelay(5);
 	}
   /* USER CODE END StartEncoderTask */
-}
-
-/* USER CODE BEGIN Header_StartBeaconTask */
-/**
- * @brief Function implementing the beaconTask thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_StartBeaconTask */
-void StartBeaconTask(void *argument)
-{
-  /* USER CODE BEGIN StartBeaconTask */
-	/* Infinite loop */
-	for (;;) {
-		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-		osDelay(1000);
-	}
-  /* USER CODE END StartBeaconTask */
 }
 
 /* Private application code --------------------------------------------------*/

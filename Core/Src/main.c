@@ -40,7 +40,7 @@
 volatile unsigned long ulHighFrequencyTimerTicks;
 uint32_t current_freq = 0;
 uint16_t current_step = 2;
-int current_band = 1;
+int current_band = 0;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -71,12 +71,12 @@ void MX_FREERTOS_Init(void);
 void Display_Init() {
     ST7735_Init();
     // Check border
-    ST7735_FillScreen(ST7735_BLACK);
+    ST7735_FillScreen(ST7735_COLOR565(40, 80, 130));
     //const char ready[] = "Ready!\r\n";
     //HAL_UART_Transmit(&huart2, (uint8_t*)ready, sizeof(ready)-1, HAL_MAX_DELAY);
-    ST7735_WriteString(15, 0, "FM/AM/SW", Font_16x26, ST7735_COLOR565(255, 187, 51), ST7735_BLACK);
-    ST7735_WriteString(34, 25, "reciever", Font_11x18, ST7735_COLOR565(0, 116, 199), ST7735_BLACK);
-    HAL_Delay(2000);
+    ST7735_WriteString(8, 10, "ShortWave", Font_16x26, ST7735_COLOR565(125, 160, 175), ST7735_COLOR565(40, 80, 130));
+    ST7735_WriteString(34, 35, "receiver", Font_11x18, ST7735_COLOR565(125, 160, 175), ST7735_COLOR565(40, 80, 130));
+    HAL_Delay(3000);
 }
 
 /* USER CODE END 0 */

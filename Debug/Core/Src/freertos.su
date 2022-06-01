@@ -1,8 +1,7 @@
-../Core/Src/freertos.c:101:13:configureTimerForRunTimeStats	4	static
-../Core/Src/freertos.c:105:22:getRunTimeCounterValue	4	static
-../Core/Src/freertos.c:135:6:vApplicationIdleHook	4	static
-../Core/Src/freertos.c:155:6:MX_FREERTOS_Init	8	static
-../Core/Src/freertos.c:203:6:StartDefaultTask	16	static
-../Core/Src/freertos.c:225:6:StartEncoderTask	40	static
-../Core/Src/freertos.c:284:6:StartBeaconTask	16	static
-../Core/Src/freertos.c:298:10:hsl_to_rgb	32	static
+../Core/Src/freertos.c:93:13:configureTimerForRunTimeStats	4	static
+../Core/Src/freertos.c:97:22:getRunTimeCounterValue	4	static
+../Core/Src/freertos.c:127:6:vApplicationIdleHook	4	static
+../Core/Src/freertos.c:147:6:MX_FREERTOS_Init	8	static
+../Core/Src/freertos.c:192:6:StartDefaultTask	16	static
+../Core/Src/freertos.c:214:6:StartEncoderTask	40	static
+../Core/Src/freertos.c:269:10:hsl_to_rgb	32	static
