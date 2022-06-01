@@ -33,14 +33,15 @@
 #include "fonts.h"
 #include "usbd_cdc_if.h"
 #include "si5351.h"
+#include "display.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 volatile unsigned long ulHighFrequencyTimerTicks;
 uint32_t current_freq = 0;
-uint16_t current_step = 2;
-int current_band = 0;
+uint16_t current_step = 0;
+uint8_t current_band = 0;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -115,14 +116,16 @@ int main(void)
   MX_TIM4_Init();
   MX_TIM1_Init();
   MX_I2C3_Init();
+  MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
   MX_USB_DEVICE_Init();
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-  //HAL_TIM_Base_Init(&htim1);
+  HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
   HAL_TIM_Base_Start_IT(&htim1);
-  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-  //HAL_TIM_Base_Start(&htim11);
+  /* Display */
+  setBacklight(50);
   Display_Init();
+  /* si5251*/
   si5351_Init(0);
   si5351_SetupCLK0(7000000, SI5351_DRIVE_STRENGTH_4MA);
   si5351_EnableOutputs(1 << 0);

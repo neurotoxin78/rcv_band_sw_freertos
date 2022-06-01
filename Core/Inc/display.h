@@ -11,7 +11,9 @@
 
 void displayFrequency(uint32_t freq);
 void displayBackgrounds();
-void displayBand(int band);
-void displayStep(int step);
+void displayBand(const char * band);
+void displayStep(const char * step);
+void blk_pwm_setvalue(uint16_t value);
+void setBacklight(uint8_t percent);
 
 #endif /* INC_BANDS_H_ */

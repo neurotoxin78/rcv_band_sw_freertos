@@ -15,7 +15,7 @@
 #include "FreeRTOS.h"
 #include "cmsis_os.h"
 #include "task.h"
-
+#include "tim.h"
 char buff[20];
 
 uint16_t light_color = ST7735_COLOR565(125, 160, 175);
@@ -35,12 +35,13 @@ void displayBackgrounds() {
     ST7735_WriteString(2, 43, " Hz", Font_7x10, dark_color, light_color);
 }
 
-void displayBand(int band)
+void displayBand(const char * band)
 {
+
 	ST7735_WriteString(35, 2, band, Font_11x18, light_color, dark_color);
 }
 
-void displayStep(int step)
+void displayStep(const char * step)
 {
 	ST7735_WriteString(104, 2, step, Font_11x18, light_color, dark_color);
 }
@@ -53,6 +54,25 @@ void displayFrequency(uint32_t freq) {
 	sprintf(buff, "%02d.%03d",mi, dig);
 	ST7735_WriteString(26, 32, buff, Font_16x26, dark_color, light_color);
 	sprintf(buff, "%03d",th);
-	ST7735_WriteString(125, 32, buff, Font_11x18, dark_color, light_color);
+	ST7735_WriteString(125, 37, buff, Font_11x18, dark_color, light_color);
 }
 
+void blk_pwm_setvalue(uint16_t value)
+{
+	  USR_TIM_PWM_OpenTim5Ch2();
+	  USR_TIM_PWM_SetCompare(value * 10);
+}
+
+void setBacklight(uint8_t percent) {
+	uint16_t i = 0;
+	uint16_t d = 0;
+	for (i = 0; i <= percent; i++) {
+		blk_pwm_setvalue(i);
+		for (d = 0; d <=60000; d++)
+		{
+
+		}
+		d = 0;
+	}
+	i=0;
+}

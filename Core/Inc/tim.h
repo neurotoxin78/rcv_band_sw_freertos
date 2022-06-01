@@ -38,6 +38,8 @@ extern TIM_HandleTypeDef htim3;
 
 extern TIM_HandleTypeDef htim4;
 
+extern TIM_HandleTypeDef htim5;
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
@@ -45,9 +47,14 @@ extern TIM_HandleTypeDef htim4;
 void MX_TIM1_Init(void);
 void MX_TIM3_Init(void);
 void MX_TIM4_Init(void);
+void MX_TIM5_Init(void);
+
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 /* USER CODE BEGIN Prototypes */
-
+void USR_TIM_PWM_OpenTim5Ch2();
+void USR_TIM_PWM_CloseTim5Ch2();
+void USR_TIM_PWM_SetCompare(uint16_t duty);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

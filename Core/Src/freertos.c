@@ -32,7 +32,7 @@
 #include "rtc.h"
 #include "display.h"
 #include "usbd_cdc_if.h"
-
+#include "si5351.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -104,10 +104,10 @@ typedef struct {
 } Step;
 
 Step step[7] = {
-		{ "1Hz", 1 }, // Step
-		{ "10Hz", 10 }, { "100Hz", 100 }, { "500Hz", 500 },
-		{ "1kHz", 1000 }, { "5kHz", 5000 }, { "10kHz", 10000 }, };
-const int lastStep = (sizeof step / sizeof(Step)) - 1;
+		{ " 1Hz ", 1 }, // Step
+		{ " 10Hz", 10 }, { "100Hz", 100 }, { "500Hz", 500 },
+		{ " 1kHz", 1000 }, { " 5kHz", 5000 }, { "10kHz", 10000 }, };
+const int lastStep = (sizeof step / sizeof(Step)) -1;
 
 typedef struct {
 	const char *name;
@@ -120,7 +120,7 @@ Band band[2] = { { "40m", 7000000, 7200000 }, // 100KHz to 1700KHz
 const int lastBand = (sizeof band / sizeof(Band)) - 1;
 extern uint32_t current_freq;
 extern uint16_t current_step;
-extern int current_band;
+extern uint8_t current_band;
 /* USER CODE END 1 */
 
 /* USER CODE BEGIN 2 */
@@ -196,10 +196,10 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN StartDefaultTask */
 	/* Infinite loop */
 	current_freq = band[current_band].minFreq;
-	current_step = step[current_step].step;
+	//current_step = step[current_step].step;
 	for (;;) {
-		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-		osDelay(1000);
+		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+		//Delay(1000);
 	}
   /* USER CODE END StartDefaultTask */
 }
@@ -218,8 +218,8 @@ void StartEncoderTask(void *argument)
 	int32_t prevCounter = 0;
 	uint8_t buttonNumber = 0;
 	/*  */
-	uint32_t max_freq = band[current_band].maxFreq;
-	uint32_t min_freq = band[current_band].minFreq;
+	const uint32_t max_freq = band[current_band].maxFreq;
+	const uint32_t min_freq = band[current_band].minFreq;
 	current_freq = min_freq;
 	/* */
 	//ST7735_FillScreenFast(ST7735_BLACK);
@@ -230,22 +230,26 @@ void StartEncoderTask(void *argument)
 	/* */
 	for (;;) {
 		int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
+		uint16_t step_value = step[current_step].step;
 		currCounter = 32767 - ((currCounter - 1) & 0xFFFF) / 2;
+
 		if (currCounter != prevCounter) {
 			if (currCounter > prevCounter) {
 				if (current_freq != min_freq) {
-					current_freq -= current_step;
+					current_freq -= step_value;
 				} else {
 					current_freq = max_freq;
 				}
+				si5351_SetupCLK0(current_freq, SI5351_DRIVE_STRENGTH_4MA);
 				displayFrequency(current_freq);
 				osDelay(5);
 			} else if (currCounter < prevCounter) {
 				if (current_freq != max_freq) {
-					current_freq += current_step;
+					current_freq += step_value;
 				} else {
 					current_freq = min_freq;
 				}
+				si5351_SetupCLK0(current_freq, SI5351_DRIVE_STRENGTH_4MA);
 				displayFrequency(current_freq);
 				osDelay(5);
 			} else {
@@ -256,7 +260,16 @@ void StartEncoderTask(void *argument)
 		// Button
 		if (buttonPressed[buttonNumber]) {
 			buttonPressed[buttonNumber] = 0;
-			//osMessageQueuePut(ButtonQueueHandle, &buttonSend, 0, 0);
+			//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+			if (current_step != lastStep)
+			{
+				current_step++;
+				displayStep(step[current_step].name);
+			} else
+			{
+				current_step = 0;
+				displayStep(step[current_step].name);
+			}
 		}
 		osDelay(5);
 	}
