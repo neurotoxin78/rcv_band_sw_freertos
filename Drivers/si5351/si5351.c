@@ -6,7 +6,7 @@
 #include "i2c.h"
 #include <si5351.h>
 #define SI5351_ADDRESS 0x60
-#define I2C_HANDLE hi2c3
+#define I2C_HANDLE hi2c2
 extern I2C_HandleTypeDef I2C_HANDLE;
 
 // Private procedures.

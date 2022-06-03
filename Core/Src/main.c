@@ -113,22 +113,18 @@ int main(void)
   MX_SPI1_Init();
   MX_TIM3_Init();
   MX_RTC_Init();
-  MX_TIM4_Init();
-  MX_TIM1_Init();
-  MX_I2C3_Init();
   MX_TIM5_Init();
+  MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
-  MX_USB_DEVICE_Init();
+  //MX_USB_DEVICE_Init();
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
-  HAL_TIM_Base_Start_IT(&htim1);
+
   /* Display */
-  setBacklight(50);
+  setBacklight(100);
   Display_Init();
   /* si5251*/
   si5351_Init(0);
-  si5351_SetupCLK0(7000000, SI5351_DRIVE_STRENGTH_4MA);
-  si5351_EnableOutputs(1 << 0);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -197,16 +193,12 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void delay_us (uint16_t us)
-{
-	__HAL_TIM_SET_COUNTER(&htim1,0);  // set the counter value a 0
-	while (__HAL_TIM_GET_COUNTER(&htim1) < us);  // wait for the counter to reach the us input in the parameter
-}
+
 /* USER CODE END 4 */
 
 /**
   * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM11 interrupt took place, inside
+  * @note   This function is called  when TIM2 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
   * a global variable "uwTick" used as application time base.
   * @param  htim : TIM handle
@@ -219,7 +211,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
   }
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM11) {
+  if (htim->Instance == TIM2) {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */

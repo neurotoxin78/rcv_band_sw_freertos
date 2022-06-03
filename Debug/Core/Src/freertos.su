@@ -3,5 +3,5 @@
 ../Core/Src/freertos.c:127:6:vApplicationIdleHook	4	static
 ../Core/Src/freertos.c:147:6:MX_FREERTOS_Init	8	static
 ../Core/Src/freertos.c:192:6:StartDefaultTask	16	static
-../Core/Src/freertos.c:214:6:StartEncoderTask	40	static
-../Core/Src/freertos.c:282:10:hsl_to_rgb	32	static
+../Core/Src/freertos.c:218:6:StartEncoderTask	40	static
+../Core/Src/freertos.c:286:10:hsl_to_rgb	32	static

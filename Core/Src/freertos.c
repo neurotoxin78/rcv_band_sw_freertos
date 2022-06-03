@@ -196,10 +196,14 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN StartDefaultTask */
 	/* Infinite loop */
 	current_freq = band[current_band].minFreq;
-	//current_step = step[current_step].step;
+	  si5351_SetupCLK0(current_freq, SI5351_DRIVE_STRENGTH_4MA);
+	  si5351_EnableOutputs(1 << 0);
+	/* Timer*/
+	  //HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
+	  //HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_2);
 	for (;;) {
-		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-		//Delay(1000);
+		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+		osDelay(250);
 	}
   /* USER CODE END StartDefaultTask */
 }
