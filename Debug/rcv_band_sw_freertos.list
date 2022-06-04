@@ -3567,12 +3567,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     uint32_t tstamp = HAL_GetTick();
  8001818:	f000 fa80 	bl	8001d1c <HAL_GetTick>
  800181c:	60b8      	str	r0, [r7, #8]
-    if(tstamp - lastPressed < 100)
+    if(tstamp - lastPressed < 250)
  800181e:	4b0a      	ldr	r3, [pc, #40]	; (8001848 <HAL_GPIO_EXTI_Callback+0x50>)
  8001820:	681b      	ldr	r3, [r3, #0]
  8001822:	68ba      	ldr	r2, [r7, #8]
  8001824:	1ad3      	subs	r3, r2, r3
- 8001826:	2b63      	cmp	r3, #99	; 0x63
+ 8001826:	2bf9      	cmp	r3, #249	; 0xf9
  8001828:	d90a      	bls.n	8001840 <HAL_GPIO_EXTI_Callback+0x48>
         return;
     lastPressed = tstamp;

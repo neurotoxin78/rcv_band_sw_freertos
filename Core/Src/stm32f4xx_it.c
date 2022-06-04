@@ -171,7 +171,7 @@ void EXTI0_IRQHandler(void)
   /* USER CODE BEGIN EXTI0_IRQn 0 */
 
   /* USER CODE END EXTI0_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(BTN_Pin);
+  HAL_GPIO_EXTI_IRQHandler(BTN_BAND_Pin);
   /* USER CODE BEGIN EXTI0_IRQn 1 */
 
   /* USER CODE END EXTI0_IRQn 1 */
@@ -253,7 +253,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 	// debounce
     uint32_t tstamp = HAL_GetTick();
-    if(tstamp - lastPressed < 100)
+    if(tstamp - lastPressed < 250)
         return;
     lastPressed = tstamp;
 
