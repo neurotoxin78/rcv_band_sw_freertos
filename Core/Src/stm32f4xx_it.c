@@ -51,7 +51,7 @@ extern volatile unsigned long ulHighFrequencyTimerTicks;
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-volatile uint8_t buttonPressed[5] = { 0 };
+volatile uint8_t buttonPressed[2] = { 0 };
 uint32_t lastPressed = 0;
 /* USER CODE END 0 */
 
@@ -62,7 +62,7 @@ extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN EV */
-
+extern uint8_t buttonNumber;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -171,10 +171,24 @@ void EXTI0_IRQHandler(void)
   /* USER CODE BEGIN EXTI0_IRQn 0 */
 
   /* USER CODE END EXTI0_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(BTN_BAND_Pin);
+  HAL_GPIO_EXTI_IRQHandler(BAND_BTN_Pin);
   /* USER CODE BEGIN EXTI0_IRQn 1 */
 
   /* USER CODE END EXTI0_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI line2 interrupt.
+  */
+void EXTI2_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI2_IRQn 0 */
+
+  /* USER CODE END EXTI2_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(ENC_BTN_Pin);
+  /* USER CODE BEGIN EXTI2_IRQn 1 */
+
+  /* USER CODE END EXTI2_IRQn 1 */
 }
 
 /**
@@ -241,10 +255,13 @@ void OTG_FS_IRQHandler(void)
 
 /* USER CODE BEGIN 1 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	int8_t buttonNumber = -1;
-
-    if(GPIO_Pin == BTN_Pin) {
+	buttonNumber = -1;
+    if(GPIO_Pin == ENC_BTN_Pin)
+    {
 		buttonNumber = 0;
+    } else if(GPIO_Pin == BAND_BTN_Pin)
+    {
+		buttonNumber = 1;
     }
 
 	if(buttonNumber < 0) {

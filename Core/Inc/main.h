@@ -57,9 +57,11 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define BTN_BAND_Pin GPIO_PIN_0
-#define BTN_BAND_GPIO_Port GPIOA
-#define BTN_BAND_EXTI_IRQn EXTI0_IRQn
+#define LED_Pin GPIO_PIN_13
+#define LED_GPIO_Port GPIOC
+#define BAND_BTN_Pin GPIO_PIN_0
+#define BAND_BTN_GPIO_Port GPIOA
+#define BAND_BTN_EXTI_IRQn EXTI0_IRQn
 #define BLK_Pin GPIO_PIN_1
 #define BLK_GPIO_Port GPIOA
 #define LCD_DC_Pin GPIO_PIN_2
@@ -70,6 +72,9 @@ void Error_Handler(void);
 #define LCD_CS_GPIO_Port GPIOA
 #define ENC_CLK_Pin GPIO_PIN_6
 #define ENC_CLK_GPIO_Port GPIOA
+#define ENC_BTN_Pin GPIO_PIN_2
+#define ENC_BTN_GPIO_Port GPIOB
+#define ENC_BTN_EXTI_IRQn EXTI2_IRQn
 #define ENC_DT_Pin GPIO_PIN_5
 #define ENC_DT_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */

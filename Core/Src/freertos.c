@@ -53,8 +53,12 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
 extern volatile uint8_t buttonPressed[5];
+uint8_t buttonNumber = 0;
 uint8_t *taskListStatus[1024];
 uint8_t *taskRunStatus[1024];
+/* Band */
+uint32_t max_freq;
+uint32_t min_freq;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -70,6 +74,13 @@ const osThreadAttr_t encoderTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for buttonsTask */
+osThreadId_t buttonsTaskHandle;
+const osThreadAttr_t buttonsTask_attributes = {
+  .name = "buttonsTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -79,6 +90,7 @@ extern volatile unsigned long ulHighFrequencyTimerTicks;
 
 void StartDefaultTask(void *argument);
 void StartEncoderTask(void *argument);
+void StartButtonsTask(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -172,6 +184,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of encoderTask */
   encoderTaskHandle = osThreadNew(StartEncoderTask, NULL, &encoderTask_attributes);
 
+  /* creation of buttonsTask */
+  buttonsTaskHandle = osThreadNew(StartButtonsTask, NULL, &buttonsTask_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -202,7 +217,7 @@ void StartDefaultTask(void *argument)
 	  //HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
 	  //HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_2);
 	for (;;) {
-		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 		osDelay(250);
 	}
   /* USER CODE END StartDefaultTask */
@@ -220,10 +235,9 @@ void StartEncoderTask(void *argument)
   /* USER CODE BEGIN StartEncoderTask */
 	/* Infinite loop */
 	int32_t prevCounter = 0;
-	uint8_t buttonNumber = 0;
 	/*  */
-	const uint32_t max_freq = band[current_band].maxFreq;
-	const uint32_t min_freq = band[current_band].minFreq;
+	max_freq = band[current_band].maxFreq;
+	min_freq = band[current_band].minFreq;
 	current_freq = min_freq;
 	/* */
 	//ST7735_FillScreenFast(ST7735_BLACK);
@@ -261,23 +275,64 @@ void StartEncoderTask(void *argument)
 			}
 			prevCounter = currCounter;
 		}
-		// Button
-		if (buttonPressed[buttonNumber]) {
-			buttonPressed[buttonNumber] = 0;
-			//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-			if (current_step != lastStep)
-			{
-				current_step++;
-				displayStep(step[current_step].name);
-			} else
-			{
-				current_step = 0;
-				displayStep(step[current_step].name);
-			}
-		}
+
 		osDelay(5);
 	}
   /* USER CODE END StartEncoderTask */
+}
+
+/* USER CODE BEGIN Header_StartButtonsTask */
+/**
+* @brief Function implementing the buttonsTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartButtonsTask */
+void StartButtonsTask(void *argument)
+{
+  /* USER CODE BEGIN StartButtonsTask */
+  /* Infinite loop */
+
+  for(;;)
+  {
+		/* BUTTON */
+		if (buttonPressed[buttonNumber]) {
+			buttonPressed[buttonNumber] = 0;
+			if (buttonNumber == 0)
+			{
+				if (current_step != lastStep) {
+					current_step++;
+					displayStep(step[current_step].name);
+				} else {
+					current_step = 0;
+					displayStep(step[current_step].name);
+				}
+			}
+			if (buttonNumber == 1)
+			{
+				HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+				if (current_band != lastBand) {
+					current_band++;
+					displayBand(band[current_band].name);
+					max_freq = band[current_band].maxFreq;
+					min_freq = band[current_band].minFreq;
+					current_freq = min_freq;
+					displayFrequency(current_freq);
+					si5351_SetupCLK0(current_freq, SI5351_DRIVE_STRENGTH_4MA);
+				} else {
+					current_band = 0;
+					displayBand(band[current_band].name);
+					max_freq = band[current_band].maxFreq;
+					min_freq = band[current_band].minFreq;
+					current_freq = min_freq;
+					displayFrequency(current_freq);
+					si5351_SetupCLK0(current_freq, SI5351_DRIVE_STRENGTH_4MA);
+				}
+			}
+		}
+		osDelay(1);
+  }
+  /* USER CODE END StartButtonsTask */
 }
 
 /* Private application code --------------------------------------------------*/
@@ -341,5 +396,6 @@ uint32_t hsl_to_rgb(uint8_t h, uint8_t s, uint8_t l) {
 	return (((uint32_t) r + m) << 16) | (((uint32_t) g + m) << 8)
 			| ((uint32_t) b + m);
 }
+
 /* USER CODE END Application */
 
