@@ -28,6 +28,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
 #include <string.h>
 #include "st7735.h"
 #include "fonts.h"
@@ -73,8 +74,6 @@ void Display_Init() {
     ST7735_Init();
     // Check border
     ST7735_FillScreen(ST7735_COLOR565(40, 80, 130));
-    //const char ready[] = "Ready!\r\n";
-    //HAL_UART_Transmit(&huart2, (uint8_t*)ready, sizeof(ready)-1, HAL_MAX_DELAY);
     ST7735_WriteString(8, 10, "ShortWave", Font_16x26, ST7735_COLOR565(125, 160, 175), ST7735_COLOR565(40, 80, 130));
     ST7735_WriteString(34, 35, "receiver", Font_11x18, ST7735_COLOR565(125, 160, 175), ST7735_COLOR565(40, 80, 130));
     HAL_Delay(3000);
@@ -110,13 +109,13 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_SPI1_Init();
-  MX_TIM3_Init();
   MX_RTC_Init();
+  MX_TIM3_Init();
   MX_TIM5_Init();
+  MX_SPI1_Init();
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
-  //MX_USB_DEVICE_Init();
+  MX_USB_DEVICE_Init();
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
 
@@ -193,7 +192,20 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+int _write(int file, uint8_t *ptr, int len) {
+    static uint8_t rc = USBD_OK;
 
+    do {
+        rc = CDC_Transmit_FS(ptr, len);
+    } while (USBD_BUSY == rc);
+
+    if (USBD_FAIL == rc) {
+        /// NOTE: Should never reach here.
+        /// TODO: Handle this error.
+        return 0;
+    }
+    return len;
+}
 /* USER CODE END 4 */
 
 /**
@@ -230,6 +242,7 @@ void Error_Handler(void)
   __disable_irq();
   while (1)
   {
+	  printf("Error_Handler");
   }
   /* USER CODE END Error_Handler_Debug */
 }

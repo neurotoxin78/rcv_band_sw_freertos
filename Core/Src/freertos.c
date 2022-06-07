@@ -54,8 +54,6 @@
 /* USER CODE BEGIN Variables */
 extern volatile uint8_t buttonPressed[5];
 uint8_t buttonNumber = 0;
-uint8_t *taskListStatus[1024];
-uint8_t *taskRunStatus[1024];
 /* Band */
 uint32_t max_freq;
 uint32_t min_freq;
@@ -117,9 +115,9 @@ typedef struct {
 
 Step step[7] = {
 		{ " 1Hz ", 1 }, // Step
-		{ " 10Hz", 10 }, { "100Hz", 100 }, { "500Hz", 500 },
-		{ " 1kHz", 1000 }, { " 5kHz", 5000 }, { "10kHz", 10000 }, };
-const int lastStep = (sizeof step / sizeof(Step)) -1;
+		{ " 10Hz", 10 }, { "100Hz", 100 }, { "500Hz", 500 }, { " 1kHz", 1000 },
+		{ " 5kHz", 5000 }, { "10kHz", 10000 }, };
+const int lastStep = (sizeof step / sizeof(Step)) - 1;
 
 typedef struct {
 	const char *name;
@@ -211,11 +209,9 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN StartDefaultTask */
 	/* Infinite loop */
 	current_freq = band[current_band].minFreq;
-	  si5351_SetupCLK0(current_freq, SI5351_DRIVE_STRENGTH_4MA);
-	  si5351_EnableOutputs(1 << 0);
+	si5351_SetupCLK0(current_freq, SI5351_DRIVE_STRENGTH_4MA);
+	si5351_EnableOutputs(1 << 0);
 	/* Timer*/
-	  //HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
-	  //HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_2);
 	for (;;) {
 		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 		osDelay(250);
@@ -234,6 +230,7 @@ void StartEncoderTask(void *argument)
 {
   /* USER CODE BEGIN StartEncoderTask */
 	/* Infinite loop */
+
 	int32_t prevCounter = 0;
 	/*  */
 	max_freq = band[current_band].maxFreq;
@@ -283,23 +280,21 @@ void StartEncoderTask(void *argument)
 
 /* USER CODE BEGIN Header_StartButtonsTask */
 /**
-* @brief Function implementing the buttonsTask thread.
-* @param argument: Not used
-* @retval None
-*/
+ * @brief Function implementing the buttonsTask thread.
+ * @param argument: Not used
+ * @retval None
+ */
 /* USER CODE END Header_StartButtonsTask */
 void StartButtonsTask(void *argument)
 {
   /* USER CODE BEGIN StartButtonsTask */
-  /* Infinite loop */
-
-  for(;;)
-  {
+	/* Infinite loop */
+	for (;;) {
 		/* BUTTON */
+		//printf("Step %d\n\r", current_step);
 		if (buttonPressed[buttonNumber]) {
 			buttonPressed[buttonNumber] = 0;
-			if (buttonNumber == 0)
-			{
+			if (buttonNumber == 0) {
 				if (current_step != lastStep) {
 					current_step++;
 					displayStep(step[current_step].name);
@@ -308,8 +303,7 @@ void StartButtonsTask(void *argument)
 					displayStep(step[current_step].name);
 				}
 			}
-			if (buttonNumber == 1)
-			{
+			if (buttonNumber == 1) {
 				HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 				if (current_band != lastBand) {
 					current_band++;
@@ -331,7 +325,7 @@ void StartButtonsTask(void *argument)
 			}
 		}
 		osDelay(1);
-  }
+	}
   /* USER CODE END StartButtonsTask */
 }
 
