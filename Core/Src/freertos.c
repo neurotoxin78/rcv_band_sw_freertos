@@ -42,7 +42,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define f_multiplier 4
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -113,10 +113,16 @@ typedef struct {
 	const uint16_t *step; // Min. frequency value for the band (unit 0.01Hz)
 } Step;
 
-Step step[7] = {
+Step step[8] = {
 		{ " 1Hz ", 1 }, // Step
-		{ " 10Hz", 10 }, { "100Hz", 100 }, { "500Hz", 500 }, { " 1kHz", 1000 },
-		{ " 5kHz", 5000 }, { "10kHz", 10000 }, };
+		{ " 10Hz", 10 },
+		{ "100Hz", 100 },
+		{ "500Hz", 500 },
+		{ " 1kHz", 1000 },
+		{ " 5kHz", 5000 },
+		{ "10kHz", 10000 },
+		{ "100k", 10000 }
+};
 const int lastStep = (sizeof step / sizeof(Step)) - 1;
 
 typedef struct {
@@ -125,8 +131,28 @@ typedef struct {
 	const uint32_t *maxFreq; // Max. frequency value for the band (unit 0.01Hz)
 } Band;
 
-Band band[2] = { { "40m", 7000000, 7200000 }, // 100KHz to 1700KHz
-		{ "20m", 14000000, 14350000 }, };
+Band band[20] = {
+		{"LMW", 100000, 1700000},
+		{"SW1", 1700000, 3500000},
+		{"SW2", 3500000, 4000000},
+		{"SW3", 4000000, 7000000},
+		{"40m", 7000000, 7300000},
+		{"41m", 7300000, 9000000},
+		{"31m", 9000000, 10000000},
+		{"30m", 10000000, 11000000},
+		{"25m", 11000000, 14000000},
+		{"20m", 14000000, 14350000},
+		{"19m", 15000000, 17000000},
+		{"16m", 17000000, 18000000},
+		{"15m", 18000000, 20000000},
+		{"13m", 20000000, 21350000},
+		{"SW14", 21350000, 22000000},
+		{"SW15", 22350000, 24980000},
+		{"12m", 24880000, 24990000},
+		{"SW17", 24990000, 26000000},
+		{"SW18", 26000000, 28000000},
+		{"10m", 28000000, 30000000}
+};
 const int lastBand = (sizeof band / sizeof(Band)) - 1;
 extern uint32_t current_freq;
 extern uint16_t current_step;
@@ -209,7 +235,7 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN StartDefaultTask */
 	/* Infinite loop */
 	current_freq = band[current_band].minFreq;
-	si5351_SetupCLK0(current_freq, SI5351_DRIVE_STRENGTH_4MA);
+	si5351_SetupCLK0(current_freq * f_multiplier, SI5351_DRIVE_STRENGTH_8MA);
 	si5351_EnableOutputs(1 << 0);
 	/* Timer*/
 	for (;;) {
@@ -255,7 +281,7 @@ void StartEncoderTask(void *argument)
 				} else {
 					current_freq = max_freq;
 				}
-				si5351_SetupCLK0(current_freq, SI5351_DRIVE_STRENGTH_4MA);
+				si5351_SetupCLK0(current_freq * f_multiplier, SI5351_DRIVE_STRENGTH_4MA);
 				displayFrequency(current_freq);
 				osDelay(5);
 			} else if (currCounter < prevCounter) {
@@ -264,7 +290,7 @@ void StartEncoderTask(void *argument)
 				} else {
 					current_freq = min_freq;
 				}
-				si5351_SetupCLK0(current_freq, SI5351_DRIVE_STRENGTH_4MA);
+				si5351_SetupCLK0(current_freq * f_multiplier, SI5351_DRIVE_STRENGTH_4MA);
 				displayFrequency(current_freq);
 				osDelay(5);
 			} else {
@@ -312,7 +338,7 @@ void StartButtonsTask(void *argument)
 					min_freq = band[current_band].minFreq;
 					current_freq = min_freq;
 					displayFrequency(current_freq);
-					si5351_SetupCLK0(current_freq, SI5351_DRIVE_STRENGTH_4MA);
+					si5351_SetupCLK0(current_freq * f_multiplier, SI5351_DRIVE_STRENGTH_4MA);
 				} else {
 					current_band = 0;
 					displayBand(band[current_band].name);
@@ -320,7 +346,7 @@ void StartButtonsTask(void *argument)
 					min_freq = band[current_band].minFreq;
 					current_freq = min_freq;
 					displayFrequency(current_freq);
-					si5351_SetupCLK0(current_freq, SI5351_DRIVE_STRENGTH_4MA);
+					si5351_SetupCLK0(current_freq * f_multiplier, SI5351_DRIVE_STRENGTH_4MA);
 				}
 			}
 		}

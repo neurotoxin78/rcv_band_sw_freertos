@@ -192,6 +192,20 @@ void EXTI2_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles EXTI line[9:5] interrupts.
+  */
+void EXTI9_5_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
+
+  /* USER CODE END EXTI9_5_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(MENU_BTN_Pin);
+  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
+
+  /* USER CODE END EXTI9_5_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM2 global interrupt.
   */
 void TIM2_IRQHandler(void)
@@ -262,7 +276,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     } else if(GPIO_Pin == BAND_BTN_Pin)
     {
 		buttonNumber = 1;
-    }
+    } else if(GPIO_Pin == MENU_BTN_Pin)
 
 	if(buttonNumber < 0) {
 		return;
