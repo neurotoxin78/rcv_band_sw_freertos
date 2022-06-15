@@ -277,6 +277,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     {
 		buttonNumber = 1;
     } else if(GPIO_Pin == MENU_BTN_Pin)
+    	buttonNumber = 2;
 
 	if(buttonNumber < 0) {
 		return;

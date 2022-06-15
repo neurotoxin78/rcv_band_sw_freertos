@@ -5,4 +5,4 @@
 ../Core/Src/freertos.c:231:6:StartDefaultTask	16	static
 ../Core/Src/freertos.c:255:6:StartEncoderTask	32	static
 ../Core/Src/freertos.c:314:6:StartButtonsTask	16	static
-../Core/Src/freertos.c:361:10:hsl_to_rgb	32	static
+../Core/Src/freertos.c:381:10:hsl_to_rgb	32	static

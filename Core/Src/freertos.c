@@ -349,6 +349,26 @@ void StartButtonsTask(void *argument)
 					si5351_SetupCLK0(current_freq * f_multiplier, SI5351_DRIVE_STRENGTH_4MA);
 				}
 			}
+			if (buttonNumber == 2) {
+							HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+							if (current_band != 0) {
+								current_band--;
+								displayBand(band[current_band].name);
+								max_freq = band[current_band].maxFreq;
+								min_freq = band[current_band].minFreq;
+								current_freq = min_freq;
+								displayFrequency(current_freq);
+								si5351_SetupCLK0(current_freq * f_multiplier, SI5351_DRIVE_STRENGTH_4MA);
+							} else {
+								current_band = lastBand;
+								displayBand(band[current_band].name);
+								max_freq = band[current_band].maxFreq;
+								min_freq = band[current_band].minFreq;
+								current_freq = min_freq;
+								displayFrequency(current_freq);
+								si5351_SetupCLK0(current_freq * f_multiplier, SI5351_DRIVE_STRENGTH_4MA);
+							}
+						}
 		}
 		osDelay(1);
 	}
