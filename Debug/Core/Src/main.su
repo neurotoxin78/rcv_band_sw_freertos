@@ -1,7 +1,7 @@
 ../Core/Src/main.c:73:6:Display_Init	24	static
 ../Core/Src/main.c:88:5:main	8	static
-../Core/Src/main.c:152:6:SystemClock_Config	88	static
-../Core/Src/main.c:195:5:_write	24	static
-../Core/Src/main.c:219:6:HAL_TIM_PeriodElapsedCallback	16	static
-../Core/Src/main.c:238:6:Error_Handler	8	static,ignoring_inline_asm
-../Core/Src/main.c:258:6:assert_failed	16	static
+../Core/Src/main.c:151:6:SystemClock_Config	88	static
+../Core/Src/main.c:194:5:_write	24	static
+../Core/Src/main.c:218:6:HAL_TIM_PeriodElapsedCallback	16	static
+../Core/Src/main.c:237:6:Error_Handler	8	static,ignoring_inline_asm
+../Core/Src/main.c:257:6:assert_failed	16	static

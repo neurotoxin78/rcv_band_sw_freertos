@@ -75,8 +75,8 @@ void Display_Init() {
     // Check border
     ST7735_FillScreen(ST7735_COLOR565(40, 80, 130));
     ST7735_WriteString(8, 10, "ShortWave", Font_16x26, ST7735_COLOR565(125, 160, 175), ST7735_COLOR565(40, 80, 130));
-    ST7735_WriteString(34, 35, "receiver", Font_11x18, ST7735_COLOR565(125, 160, 175), ST7735_COLOR565(40, 80, 130));
-    HAL_Delay(3000);
+    ST7735_WriteString(15, 35, "SDR RECEIVER", Font_11x18, ST7735_COLOR565(125, 160, 175), ST7735_COLOR565(40, 80, 130));
+    HAL_Delay(2000);
 }
 
 /* USER CODE END 0 */
@@ -111,16 +111,15 @@ int main(void)
   MX_GPIO_Init();
   MX_RTC_Init();
   MX_TIM3_Init();
-  MX_TIM5_Init();
   MX_SPI1_Init();
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
   MX_USB_DEVICE_Init();
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-  HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
+  //HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
 
   /* Display */
-  setBacklight(100);
+  //setBacklight(100);
   Display_Init();
   /* si5251*/
   si5351_Init(0);
