@@ -29,7 +29,6 @@
 #include "st7735.h"
 #include "fonts.h"
 #include "tim.h"
-#include "rtc.h"
 #include "display.h"
 #include "usbd_cdc_if.h"
 #include "si5351.h"
